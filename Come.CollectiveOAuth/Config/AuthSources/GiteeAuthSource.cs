@@ -7,32 +7,32 @@ namespace Come.CollectiveOAuth.Config
      */
     public class GiteeAuthSource : IAuthSource
     {
-        public string authorize()
+        public string Authorize()
         {
             return "https://gitee.com/oauth/authorize";
         }
 
-        public string accessToken()
+        public string AccessToken()
         {
             return "https://gitee.com/oauth/token";
         }
 
-        public string userInfo()
+        public string UserInfo()
         {
             return "https://gitee.com/api/v5/user";
         }
 
-        public string revoke()
+        public string Revoke()
         {
             throw new System.NotImplementedException();
         }
 
-        public string refresh()
+        public string Refresh()
         {
             throw new System.NotImplementedException();
         }
 
-        public string getName()
+        public string GetName()
         {
             return DefaultAuthSourceEnum.GITEE.ToString();
         }

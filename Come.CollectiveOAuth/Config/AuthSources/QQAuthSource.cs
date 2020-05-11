@@ -7,32 +7,32 @@ namespace Come.CollectiveOAuth.Config
      */
     public class QQAuthSource : IAuthSource
     {
-        public string authorize()
+        public string Authorize()
         {
             return "https://graph.qq.com/oauth2.0/authorize";
         }
 
-        public string accessToken()
+        public string AccessToken()
         {
             return "https://graph.qq.com/oauth2.0/token";
         }
 
-        public string userInfo()
+        public string UserInfo()
         {
             return "https://graph.qq.com/user/get_user_info";
         }
 
-        public string revoke()
+        public string Revoke()
         {
             throw new System.NotImplementedException();
         }
 
-        public string refresh()
+        public string Refresh()
         {
             return "https://graph.qq.com/oauth2.0/token";
         }
 
-        public string getName()
+        public string GetName()
         {
             return DefaultAuthSourceEnum.QQ.ToString();
         }

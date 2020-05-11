@@ -6,12 +6,12 @@ namespace Come.CollectiveOAuth.Enums
     {
         public EnumModel(Enum um)
         {
-            this.value = (int)Convert.ChangeType(um, typeof(int));
-            this.name = um.ToString();
-            this.text = um.GetDesc();
+            this.Value = (int)Convert.ChangeType(um, typeof(int));
+            this.Name = um.ToString();
+            this.Text = um.GetDesc();
         }
-        public int value { get; set; }
-        public string name { get; set; }
-        public string text { get; set; }
+        public int Value { get; set; }
+        public string Name { get; set; }
+        public string Text { get; set; }
     }
 }

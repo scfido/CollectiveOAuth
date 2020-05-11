@@ -8,32 +8,32 @@ namespace Come.CollectiveOAuth.Config
     public class WechatEnterpriseScanAuthSource : IAuthSource
     {
         
-        public string accessToken()
+        public string AccessToken()
         {
             return "https://qyapi.weixin.qq.com/cgi-bin/gettoken";
         }
 
-        public string authorize()
+        public string Authorize()
         {
             return "https://open.work.weixin.qq.com/wwopen/sso/qrConnect";
         }
 
-        public string getName()
+        public string GetName()
         {
             return DefaultAuthSourceEnum.WECHAT_ENTERPRISE_SCAN.ToString();
         }
 
-        public string refresh()
+        public string Refresh()
         {
             throw new System.NotImplementedException();
         }
 
-        public string revoke()
+        public string Revoke()
         {
             throw new System.NotImplementedException();
         }
 
-        public string userInfo()
+        public string UserInfo()
         {
             return "https://qyapi.weixin.qq.com/cgi-bin/user/getuserinfo";
         }

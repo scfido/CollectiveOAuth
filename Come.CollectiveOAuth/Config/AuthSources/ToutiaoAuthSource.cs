@@ -7,32 +7,32 @@ namespace Come.CollectiveOAuth.Config
      */
     public class ToutiaoAuthSource : IAuthSource
     {
-        public string authorize()
+        public string Authorize()
         {
             return "https://open.snssdk.com/auth/authorize";
         }
 
-        public string accessToken()
+        public string AccessToken()
         {
             return "https://open.snssdk.com/auth/token";
         }
 
-        public string userInfo()
+        public string UserInfo()
         {
             return "https://open.snssdk.com/data/user_profile";
         }
 
-        public string revoke()
+        public string Revoke()
         {
             throw new System.NotImplementedException();
         }
 
-        public string refresh()
+        public string Refresh()
         {
             throw new System.NotImplementedException();
         }
 
-        public string getName()
+        public string GetName()
         {
             return DefaultAuthSourceEnum.TOUTIAO.ToString();
         }

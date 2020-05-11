@@ -7,32 +7,32 @@ namespace Come.CollectiveOAuth.Config
      */
     public class GithubAuthSource : IAuthSource
     {
-        public string authorize()
+        public string Authorize()
         {
             return "https://github.com/login/oauth/authorize";
         }
 
-        public string accessToken()
+        public string AccessToken()
         {
             return "https://github.com/login/oauth/access_token";
         }
 
-        public string userInfo()
+        public string UserInfo()
         {
             return "https://api.github.com/user";
         }
 
-        public string revoke()
+        public string Revoke()
         {
             throw new System.NotImplementedException();
         }
 
-        public string refresh()
+        public string Refresh()
         {
             throw new System.NotImplementedException();
         }
 
-        public string getName()
+        public string GetName()
         {
             return DefaultAuthSourceEnum.GITHUB.ToString();
         }

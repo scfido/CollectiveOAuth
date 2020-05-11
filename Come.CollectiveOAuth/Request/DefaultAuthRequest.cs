@@ -27,7 +27,7 @@ namespace Come.CollectiveOAuth.Request
             this.authStateCache = authStateCache;
         }
 
-        public virtual AuthResponse refresh(AuthToken authToken)
+        public virtual AuthResponse Refresh(AuthToken authToken)
         {
             throw new System.NotImplementedException();
         }
@@ -46,7 +46,7 @@ namespace Come.CollectiveOAuth.Request
          * @see AuthDefaultRequest#authorize()
          * @see AuthDefaultRequest#authorize(String)
          */
-        protected virtual AuthToken getAccessToken(AuthCallback authCallback)
+        protected virtual AuthToken GetAccessToken(AuthCallback authCallback)
         {
             throw new System.NotImplementedException();
         }
@@ -58,7 +58,7 @@ namespace Come.CollectiveOAuth.Request
          * @return 用户信息
          * @see AuthDefaultRequest#getAccessToken(AuthCallback)
          */
-        protected virtual AuthUser getUserInfo(AuthToken authToken)
+        protected virtual AuthUser GetUserInfo(AuthToken authToken)
         {
             throw new System.NotImplementedException();
         }
@@ -73,9 +73,9 @@ namespace Come.CollectiveOAuth.Request
          * @return 返回授权地址
          * @see AuthDefaultRequest#authorize(String)
          */
-        public virtual string authorize()
+        public virtual string Authorize()
         {
-            return this.authorize(null);
+            return this.Authorize(null);
         }
 
         /**
@@ -85,14 +85,14 @@ namespace Come.CollectiveOAuth.Request
          * @return 返回授权地址
          * @since 1.9.3
          */
-        public virtual string authorize(string state)
+        public virtual string Authorize(string state)
         {
-            return UrlBuilder.fromBaseUrl(source.authorize())
-                .queryParam("response_type", "code")
-                .queryParam("client_id", config.clientId)
-                .queryParam("redirect_uri", config.redirectUri)
-                .queryParam("state", getRealState(state))
-                .build();
+            return UrlBuilder.FromBaseUrl(source.Authorize())
+                .QueryParam("response_type", "code")
+                .QueryParam("client_id", config.ClientId)
+                .QueryParam("redirect_uri", config.RedirectUri)
+                .QueryParam("state", GetRealState(state))
+                .Build();
         }
 
 
@@ -104,13 +104,13 @@ namespace Come.CollectiveOAuth.Request
          */
         protected virtual string accessTokenUrl(string code)
         {
-            return UrlBuilder.fromBaseUrl(source.accessToken())
-                .queryParam("code", code)
-                .queryParam("client_id", config.clientId)
-                .queryParam("client_secret", config.clientSecret)
-                .queryParam("grant_type", "authorization_code")
-                .queryParam("redirect_uri", config.redirectUri)
-                .build();
+            return UrlBuilder.FromBaseUrl(source.AccessToken())
+                .QueryParam("code", code)
+                .QueryParam("client_id", config.ClientId)
+                .QueryParam("client_secret", config.ClientSecret)
+                .QueryParam("grant_type", "authorization_code")
+                .QueryParam("redirect_uri", config.RedirectUri)
+                .Build();
         }
 
 
@@ -120,15 +120,15 @@ namespace Come.CollectiveOAuth.Request
          * @param refreshToken refreshToken
          * @return 返回获取accessToken的url
          */
-        protected virtual string refreshTokenUrl(string refreshToken)
+        protected virtual string RefreshTokenUrl(string refreshToken)
         {
-            return UrlBuilder.fromBaseUrl(source.refresh())
-                .queryParam("client_id", config.clientId)
-                .queryParam("client_secret", config.clientSecret)
-                .queryParam("refresh_token", refreshToken)
-                .queryParam("grant_type", "refresh_token")
-                .queryParam("redirect_uri", config.redirectUri)
-                .build();
+            return UrlBuilder.FromBaseUrl(source.Refresh())
+                .QueryParam("client_id", config.ClientId)
+                .QueryParam("client_secret", config.ClientSecret)
+                .QueryParam("refresh_token", refreshToken)
+                .QueryParam("grant_type", "refresh_token")
+                .QueryParam("redirect_uri", config.RedirectUri)
+                .Build();
         }
 
         /**
@@ -137,24 +137,24 @@ namespace Come.CollectiveOAuth.Request
          * @param authToken token
          * @return 返回获取userInfo的url
          */
-        protected virtual string userInfoUrl(AuthToken authToken)
+        protected virtual string UserInfoUrl(AuthToken authToken)
         {
-            return UrlBuilder.fromBaseUrl(source.userInfo()).queryParam("access_token", authToken.accessToken).build();
+            return UrlBuilder.FromBaseUrl(source.UserInfo()).QueryParam("access_token", authToken.AccessToken).Build();
         }
-        public virtual AuthResponse login(AuthCallback authCallback)
+        public virtual AuthResponse Login(AuthCallback authCallback)
         {
             try
             {
-                AuthChecker.checkCode(source, authCallback);
-                AuthChecker.checkState(authCallback.state, source, authStateCache);
+                AuthChecker.CheckCode(source, authCallback);
+                AuthChecker.CheckState(authCallback.State, source, authStateCache);
 
-                AuthToken authToken = this.getAccessToken(authCallback);
-                AuthUser user = this.getUserInfo(authToken);
+                AuthToken authToken = this.GetAccessToken(authCallback);
+                AuthUser user = this.GetUserInfo(authToken);
                 return new AuthResponse(Convert.ToInt32(AuthResponseStatus.SUCCESS), null, user);
             }
             catch (Exception e)
             {
-                return this.responseError(e);
+                return this.ResponseError(e);
             }
         }
 
@@ -164,9 +164,9 @@ namespace Come.CollectiveOAuth.Request
          * @param authToken token
          * @return 返回获取revoke authorization的url
          */
-        protected virtual string revokeUrl(AuthToken authToken)
+        protected virtual string RevokeUrl(AuthToken authToken)
         {
-            return UrlBuilder.fromBaseUrl(source.revoke()).queryParam("access_token", authToken.accessToken).build();
+            return UrlBuilder.FromBaseUrl(source.Revoke()).QueryParam("access_token", authToken.AccessToken).Build();
         }
 
         /**
@@ -175,14 +175,14 @@ namespace Come.CollectiveOAuth.Request
         * @param state 原始的state
         * @return 返回不为null的state
         */
-        protected virtual string getRealState(string state)
+        protected virtual string GetRealState(string state)
         {
             if (string.IsNullOrWhiteSpace(state))
             {
                 state = Guid.NewGuid().ToString();
             }
             // 缓存state
-            authStateCache.cache(state, state);
+            authStateCache.Cache(state, state);
             return state;
         }
 
@@ -193,7 +193,7 @@ namespace Come.CollectiveOAuth.Request
          * @param e 具体的异常
          * @return AuthResponse
          */
-        private AuthResponse responseError(Exception e)
+        private AuthResponse ResponseError(Exception e)
         {
             int errorCode = Convert.ToInt32(AuthResponseStatus.FAILURE);
             string errorMsg = e.Message;
@@ -208,7 +208,7 @@ namespace Come.CollectiveOAuth.Request
         * @param code code码
         * @return HttpResponse
         */
-        protected virtual string doPostAuthorizationCode(string code)
+        protected virtual string DoPostAuthorizationCode(string code)
         {
             return HttpUtils.RequestPost(accessTokenUrl(code));
         }
@@ -219,7 +219,7 @@ namespace Come.CollectiveOAuth.Request
          * @param code code码
          * @return HttpResponse
          */
-        protected virtual string doGetAuthorizationCode(String code)
+        protected virtual string DoGetAuthorizationCode(String code)
         {
             return HttpUtils.RequestGet(accessTokenUrl(code));
         }
@@ -230,9 +230,9 @@ namespace Come.CollectiveOAuth.Request
          * @param authToken token封装
          * @return HttpResponse
          */
-        protected virtual string doPostUserInfo(AuthToken authToken)
+        protected virtual string DoPostUserInfo(AuthToken authToken)
         {
-            return HttpUtils.RequestPost(userInfoUrl(authToken));
+            return HttpUtils.RequestPost(UserInfoUrl(authToken));
         }
 
         /**
@@ -241,9 +241,9 @@ namespace Come.CollectiveOAuth.Request
          * @param authToken token封装
          * @return HttpResponse
          */
-        protected virtual string doGetUserInfo(AuthToken authToken)
+        protected virtual string DoGetUserInfo(AuthToken authToken)
         {
-            return HttpUtils.RequestGet(userInfoUrl(authToken));
+            return HttpUtils.RequestGet(UserInfoUrl(authToken));
         }
 
         /**
@@ -252,9 +252,9 @@ namespace Come.CollectiveOAuth.Request
          * @param authToken token封装
          * @return HttpResponse
          */
-        protected virtual string doPostRevoke(AuthToken authToken)
+        protected virtual string DoPostRevoke(AuthToken authToken)
         {
-            return HttpUtils.RequestPost(revokeUrl(authToken));
+            return HttpUtils.RequestPost(RevokeUrl(authToken));
         }
 
         /**
@@ -263,9 +263,9 @@ namespace Come.CollectiveOAuth.Request
          * @param authToken token封装
          * @return HttpResponse
          */
-        protected virtual string doGetRevoke(AuthToken authToken)
+        protected virtual string DoGetRevoke(AuthToken authToken)
         {
-            return HttpUtils.RequestGet(revokeUrl(authToken));
+            return HttpUtils.RequestGet(RevokeUrl(authToken));
         }
 
     }

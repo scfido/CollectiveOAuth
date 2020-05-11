@@ -28,14 +28,14 @@ namespace Come.AspNetCore.Sample
                     foreach (var authSource in defaultAuthList)
                     {
                         var clientConfig = new ClientConfig();
-                        clientConfig.clientId = AppSettingUtils.GetStrValue($"{_defaultPrefix}{authSource}_ClientId");
-                        clientConfig.clientSecret = AppSettingUtils.GetStrValue($"{_defaultPrefix}{authSource}_ClientSecret");
-                        clientConfig.redirectUri = AppSettingUtils.GetStrValue($"{_defaultPrefix}{authSource}_RedirectUri");
+                        clientConfig.ClientId = AppSettingUtils.GetStrValue($"{_defaultPrefix}{authSource}_ClientId");
+                        clientConfig.ClientSecret = AppSettingUtils.GetStrValue($"{_defaultPrefix}{authSource}_ClientSecret");
+                        clientConfig.RedirectUri = AppSettingUtils.GetStrValue($"{_defaultPrefix}{authSource}_RedirectUri");
                         clientConfig.alipayPublicKey = AppSettingUtils.GetStrValue($"{_defaultPrefix}{authSource}_AlipayPublicKey");
-                        clientConfig.unionId = AppSettingUtils.GetStrValue($"{_defaultPrefix}{authSource}_UnionId");
-                        clientConfig.stackOverflowKey = AppSettingUtils.GetStrValue($"{_defaultPrefix}{authSource}_StackOverflowKey");
-                        clientConfig.agentId = AppSettingUtils.GetStrValue($"{_defaultPrefix}{authSource}_AgentId");
-                        clientConfig.scope = AppSettingUtils.GetStrValue($"{_defaultPrefix}{authSource}_Scope");
+                        clientConfig.UnionId = AppSettingUtils.GetStrValue($"{_defaultPrefix}{authSource}_UnionId");
+                        clientConfig.StackOverflowKey = AppSettingUtils.GetStrValue($"{_defaultPrefix}{authSource}_StackOverflowKey");
+                        clientConfig.AgentId = AppSettingUtils.GetStrValue($"{_defaultPrefix}{authSource}_AgentId");
+                        clientConfig.Scope = AppSettingUtils.GetStrValue($"{_defaultPrefix}{authSource}_Scope");
                         _clientConfigs.Add(authSource, clientConfig);
                     }
                     #endregion
@@ -86,7 +86,7 @@ namespace Come.AspNetCore.Sample
             ClientConfig clientConfig = GetClientConfig(authSource);
             IAuthStateCache authStateCache = new DefaultAuthStateCache();
 
-            DefaultAuthSourceEnum authSourceEnum = GlobalAuthUtil.enumFromString<DefaultAuthSourceEnum>(authSource);
+            DefaultAuthSourceEnum authSourceEnum = GlobalAuthUtil.EnumFromString<DefaultAuthSourceEnum>(authSource);
 
             switch (authSourceEnum)
             {

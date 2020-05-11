@@ -17,12 +17,12 @@ namespace Come.CollectiveOAuth.Request
         private IAopClient aopClient;
         public AlipayMpAuthRequest(ClientConfig config) : base(config, new AlipayMPAuthSource())
         {
-            aopClient = new DefaultAopClient(source.accessToken(), config.clientId, config.clientSecret, "json", "1.0", "RSA2", config.alipayPublicKey, "GBK", false);
+            aopClient = new DefaultAopClient(source.AccessToken(), config.ClientId, config.ClientSecret, "json", "1.0", "RSA2", config.alipayPublicKey, "GBK", false);
         }
 
         public AlipayMpAuthRequest(ClientConfig config, IAuthStateCache authStateCache) : base(config, new AlipayMPAuthSource(), authStateCache)
         {
-            aopClient = new DefaultAopClient(source.accessToken(), config.clientId, config.clientSecret, "json", "1.0", "RSA2", config.alipayPublicKey, "GBK", false);
+            aopClient = new DefaultAopClient(source.AccessToken(), config.ClientId, config.ClientSecret, "json", "1.0", "RSA2", config.alipayPublicKey, "GBK", false);
         }
 
         /**
@@ -31,11 +31,11 @@ namespace Come.CollectiveOAuth.Request
           * @param authCallback 回调返回的参数
           * @return 所有信息
           */
-        protected override AuthToken getAccessToken(AuthCallback authCallback)
+        protected override AuthToken GetAccessToken(AuthCallback authCallback)
         {
             AlipaySystemOauthTokenRequest request = new AlipaySystemOauthTokenRequest();
             request.GrantType = "authorization_code";
-            request.Code = authCallback.auth_code;
+            request.Code = authCallback.AuthCode;
             AlipaySystemOauthTokenResponse response = null;
             try
             {
@@ -51,18 +51,18 @@ namespace Come.CollectiveOAuth.Request
             }
 
             var authToken = new AuthToken();
-            authToken.accessToken = response.AccessToken;
-            authToken.uid = response.UserId;
-            authToken.expireIn = Convert.ToInt32(response.ExpiresIn);
-            authToken.refreshToken = response.RefreshToken;
-            authToken.userId = response.AlipayUserId;
+            authToken.AccessToken = response.AccessToken;
+            authToken.Uid = response.UserId;
+            authToken.ExpireIn = Convert.ToInt32(response.ExpiresIn);
+            authToken.RefreshToken = response.RefreshToken;
+            authToken.UserId = response.AlipayUserId;
 
             return authToken;
         }
 
-        protected override AuthUser getUserInfo(AuthToken authToken)
+        protected override AuthUser GetUserInfo(AuthToken authToken)
         {
-            string accessToken = authToken.accessToken;
+            string accessToken = authToken.AccessToken;
             AlipayUserInfoShareRequest request = new AlipayUserInfoShareRequest();
             AlipayUserInfoShareResponse response = null;
             try
@@ -82,16 +82,16 @@ namespace Come.CollectiveOAuth.Request
             string location = string.Format("{0} {1}", !province.IsNullOrWhiteSpace() ? "" : province, !city.IsNullOrWhiteSpace() ? "" : city);
 
             var authUser = new AuthUser();
-            authUser.username = response.UserName.IsNullOrWhiteSpace() ? response.NickName : response.UserName;
-            authUser.nickname = response.NickName;
-            authUser.avatar = response.Avatar;
-            authUser.location = location;
-            authUser.uuid = response.UserId;
-            authUser.gender = GlobalAuthUtil.getRealGender(response.Gender);
-            authUser.token = authToken;
-            authUser.source = source.getName();
-            authUser.originalUser = response;
-            authUser.originalUserStr = JsonConvert.SerializeObject(response);
+            authUser.Username = response.UserName.IsNullOrWhiteSpace() ? response.NickName : response.UserName;
+            authUser.Nickname = response.NickName;
+            authUser.Avatar = response.Avatar;
+            authUser.Location = location;
+            authUser.Uuid = response.UserId;
+            authUser.Gender = GlobalAuthUtil.GetRealGender(response.Gender);
+            authUser.Token = authToken;
+            authUser.Source = source.GetName();
+            authUser.OriginalUser = response;
+            authUser.OriginalUserStr = JsonConvert.SerializeObject(response);
             return authUser;
         }
 
@@ -102,14 +102,14 @@ namespace Come.CollectiveOAuth.Request
         * @return 返回授权地址
         * @since 1.9.3
         */
-        public override string authorize(string state)
+        public override string Authorize(string state)
         {
-            return UrlBuilder.fromBaseUrl(source.authorize())
-                .queryParam("app_id", config.clientId)
-                .queryParam("scope", config.scope.IsNullOrWhiteSpace() ? "auth_user" : config.scope)
-                .queryParam("redirect_uri", config.redirectUri)
-                .queryParam("state", getRealState(state))
-                .build();
+            return UrlBuilder.FromBaseUrl(source.Authorize())
+                .QueryParam("app_id", config.ClientId)
+                .QueryParam("scope", config.Scope.IsNullOrWhiteSpace() ? "auth_user" : config.Scope)
+                .QueryParam("redirect_uri", config.RedirectUri)
+                .QueryParam("state", GetRealState(state))
+                .Build();
         }
     }
 }

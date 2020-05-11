@@ -9,17 +9,17 @@ namespace Come.CollectiveOAuth.Cache
         /// </summary>
         private static string Default_Cache_Prefix = "CollectiveOAuth_Status_";
 
-        public void cache(string key, string value)
+        public void Cache(string key, string value)
         {
             HttpRuntimeCache.Set($"{Default_Cache_Prefix}{key}", value);
         }
 
-        public void cache(string key, string value, long timeout)
+        public void Cache(string key, string value, long timeout)
         {
             HttpRuntimeCache.Set($"{Default_Cache_Prefix}{key}", value, timeout);
         }
 
-        public bool containsKey(string key)
+        public bool ContainsKey(string key)
         {
             var cacheObj = HttpRuntimeCache.Get($"{Default_Cache_Prefix}{key}");
             if (cacheObj != null)
@@ -30,7 +30,7 @@ namespace Come.CollectiveOAuth.Cache
             return false;
         }
 
-        public string get(string key)
+        public string Get(string key)
         {
             var cacheObj = HttpRuntimeCache.Get($"{Default_Cache_Prefix}{key}");
             if (cacheObj != null)

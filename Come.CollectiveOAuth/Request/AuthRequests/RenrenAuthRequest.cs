@@ -19,84 +19,84 @@ namespace Come.CollectiveOAuth.Request
         {
         }
 
-        protected override AuthToken getAccessToken(AuthCallback authCallback)
+        protected override AuthToken GetAccessToken(AuthCallback authCallback)
         {
-            return this.getToken(accessTokenUrl(authCallback.code));
+            return this.getToken(accessTokenUrl(authCallback.Code));
         }
 
-        protected override AuthUser getUserInfo(AuthToken authToken)
+        protected override AuthUser GetUserInfo(AuthToken authToken)
         {
-            var response = doGetUserInfo(authToken);
-            var userObj = response.parseObject().getJSONObject("response");
+            var response = DoGetUserInfo(authToken);
+            var userObj = response.ParseObject().GetJSONObject("response");
 
             var authUser = new AuthUser();
-            authUser.uuid = userObj.getString("id");
-            authUser.username = userObj.getString("name");
-            authUser.nickname = userObj.getString("name");
-            authUser.avatar = getAvatarUrl(userObj);
-            authUser.company = getCompany(userObj);
-            authUser.gender = getGender(userObj);
+            authUser.Uuid = userObj.GetString("id");
+            authUser.Username = userObj.GetString("name");
+            authUser.Nickname = userObj.GetString("name");
+            authUser.Avatar = getAvatarUrl(userObj);
+            authUser.Company = getCompany(userObj);
+            authUser.Gender = getGender(userObj);
 
-            authUser.token = authToken;
-            authUser.source = source.getName();
-            authUser.originalUser = userObj;
-            authUser.originalUserStr = response;
+            authUser.Token = authToken;
+            authUser.Source = source.GetName();
+            authUser.OriginalUser = userObj;
+            authUser.OriginalUserStr = response;
             return authUser;
         }
 
-        public override AuthResponse refresh(AuthToken authToken)
+        public override AuthResponse Refresh(AuthToken authToken)
         {
-            var token = getToken(this.refreshTokenUrl(authToken.refreshToken));
+            var token = getToken(this.RefreshTokenUrl(authToken.RefreshToken));
             return new AuthResponse(AuthResponseStatus.SUCCESS.GetCode(), AuthResponseStatus.SUCCESS.GetDesc(), token);
         }
 
         private AuthToken getToken(string url)
         {
             var response = HttpUtils.RequestPost(url);
-            var jsonObject = response.parseObject();
+            var jsonObject = response.ParseObject();
             if (jsonObject.ContainsKey("error"))
             {
                 throw new Exception("Failed to get token from Renren: " + jsonObject);
             }
 
             var authToken = new AuthToken();
-            authToken.accessToken = jsonObject.getString("access_token");
-            authToken.tokenType = jsonObject.getString("token_type");
-            authToken.expireIn = jsonObject.getInt32("expires_in");
-            authToken.refreshToken = jsonObject.getString("refresh_token");
-            authToken.openId = jsonObject.getJSONObject("user").getString("id");
+            authToken.AccessToken = jsonObject.GetString("access_token");
+            authToken.TokenType = jsonObject.GetString("token_type");
+            authToken.ExpireIn = jsonObject.GetInt32("expires_in");
+            authToken.RefreshToken = jsonObject.GetString("refresh_token");
+            authToken.OpenId = jsonObject.GetJSONObject("user").GetString("id");
 
             return authToken;
         }
 
         private string getAvatarUrl(Dictionary<string, object> userObj)
         {
-            var jsonArray = userObj.getJSONArray("avatar");
+            var jsonArray = userObj.GetJSONArray("avatar");
             if (jsonArray.Count == 0)
             {
                 return null;
             }
-            return jsonArray[0].getString("url");
+            return jsonArray[0].GetString("url");
         }
 
         private AuthUserGender getGender(Dictionary<string, object> userObj)
         {
-            var basicInformation = userObj.getJSONObject("basicInformation");
+            var basicInformation = userObj.GetJSONObject("basicInformation");
             if (basicInformation.Count == 0)
             {
-                return AuthUserGender.UNKNOWN;
+                return AuthUserGender.Unknown;
             }
-            return GlobalAuthUtil.getRealGender(basicInformation.getString("sex"));
+            return GlobalAuthUtil.GetRealGender(basicInformation.GetString("sex"));
         }
 
         private string getCompany(Dictionary<string, object> userObj)
         {
-            var jsonArray = userObj.getJSONArray("work");
+            var jsonArray = userObj.GetJSONArray("work");
             if (jsonArray.Count == 0)
             {
                 return null;
             }
-            return jsonArray[0].getString("name");
+            return jsonArray[0].GetString("name");
         }
 
         /**
@@ -105,23 +105,23 @@ namespace Come.CollectiveOAuth.Request
          * @param authToken 用户授权后的token
          * @return 返回获取userInfo的url
          */
-        protected override string userInfoUrl(AuthToken authToken)
+        protected override string UserInfoUrl(AuthToken authToken)
         {
-            return UrlBuilder.fromBaseUrl(source.userInfo())
-                .queryParam("access_token", authToken.accessToken)
-                .queryParam("userId", authToken.openId)
-                .build();
+            return UrlBuilder.FromBaseUrl(source.UserInfo())
+                .QueryParam("access_token", authToken.AccessToken)
+                .QueryParam("userId", authToken.OpenId)
+                .Build();
         }
 
-        public override string authorize(string state)
+        public override string Authorize(string state)
         {
-            return UrlBuilder.fromBaseUrl(source.authorize())
-                .queryParam("response_type", "code")
-                .queryParam("client_id", config.clientId)
-                .queryParam("redirect_uri", config.redirectUri)
-                .queryParam("state", getRealState(state))
-                .queryParam("display", "page")
-                .build();
+            return UrlBuilder.FromBaseUrl(source.Authorize())
+                .QueryParam("response_type", "code")
+                .QueryParam("client_id", config.ClientId)
+                .QueryParam("redirect_uri", config.RedirectUri)
+                .QueryParam("state", GetRealState(state))
+                .QueryParam("display", "page")
+                .Build();
         }
     }
 }

@@ -19,9 +19,9 @@ namespace Come.CollectiveOAuth.Request
             : base(config, new MicrosoftAuthSource(), authStateCache)
         {
         }
-        protected override AuthToken getAccessToken(AuthCallback authCallback)
+        protected override AuthToken GetAccessToken(AuthCallback authCallback)
         {
-            return getToken(accessTokenUrl(authCallback.code));
+            return getToken(accessTokenUrl(authCallback.Code));
         }
 
         /**
@@ -38,49 +38,49 @@ namespace Come.CollectiveOAuth.Request
                 { "Content-Type", "application/x-www-form-urlencoded" },
             };
 
-            var reqParamDic = GlobalAuthUtil.parseUrlObject(accessTokenUrl);
+            var reqParamDic = GlobalAuthUtil.ParseUrlObject(accessTokenUrl);
             var response = HttpUtils.RequestPost(accessTokenUrl, JsonConvert.SerializeObject(reqParamDic), reqParams);
-            var accessTokenObject = response.parseObject();
+            var accessTokenObject = response.ParseObject();
 
             this.checkResponse(accessTokenObject);
 
             var authToken = new AuthToken();
-            authToken.accessToken = accessTokenObject.getString("access_token");
-            authToken.tokenType = accessTokenObject.getString("token_type");
-            authToken.expireIn = accessTokenObject.getInt32("expires_in");
-            authToken.refreshToken = accessTokenObject.getString("refresh_token");
-            authToken.scope = accessTokenObject.getString("scope");
+            authToken.AccessToken = accessTokenObject.GetString("access_token");
+            authToken.TokenType = accessTokenObject.GetString("token_type");
+            authToken.ExpireIn = accessTokenObject.GetInt32("expires_in");
+            authToken.RefreshToken = accessTokenObject.GetString("refresh_token");
+            authToken.Scope = accessTokenObject.GetString("scope");
 
             return authToken;
         }
 
 
-        protected override AuthUser getUserInfo(AuthToken authToken)
+        protected override AuthUser GetUserInfo(AuthToken authToken)
         {
-            var token = authToken.accessToken;
-            var tokenType = authToken.tokenType;
+            var token = authToken.AccessToken;
+            var tokenType = authToken.TokenType;
             var jwt = tokenType + " " + token;
             var reqParams = new Dictionary<string, object>
             {
                 { "Authorization", jwt },
             };
 
-            var response = HttpUtils.RequestGet(userInfoUrl(authToken), reqParams);
-            var userObj = response.parseObject();
+            var response = HttpUtils.RequestGet(UserInfoUrl(authToken), reqParams);
+            var userObj = response.ParseObject();
             this.checkResponse(userObj);
 
             var authUser = new AuthUser();
-            authUser.uuid = userObj.getString("id");
-            authUser.username = userObj.getString("userPrincipalName");
-            authUser.nickname = userObj.getString("displayName");
-            authUser.location = userObj.getString("officeLocation");
-            authUser.email = userObj.getString("mail");
-            authUser.gender = AuthUserGender.UNKNOWN;
+            authUser.Uuid = userObj.GetString("id");
+            authUser.Username = userObj.GetString("userPrincipalName");
+            authUser.Nickname = userObj.GetString("displayName");
+            authUser.Location = userObj.GetString("officeLocation");
+            authUser.Email = userObj.GetString("mail");
+            authUser.Gender = AuthUserGender.Unknown;
 
-            authUser.token = authToken;
-            authUser.source = source.getName();
-            authUser.originalUser = userObj;
-            authUser.originalUserStr = response;
+            authUser.Token = authToken;
+            authUser.Source = source.GetName();
+            authUser.OriginalUser = userObj;
+            authUser.OriginalUserStr = response;
             return authUser;
         }
 
@@ -90,9 +90,9 @@ namespace Come.CollectiveOAuth.Request
          * @param authToken 登录成功后返回的Token信息
          * @return AuthResponse
          */
-        public override AuthResponse refresh(AuthToken authToken)
+        public override AuthResponse Refresh(AuthToken authToken)
         {
-            var token = getToken(refreshTokenUrl(authToken.refreshToken));
+            var token = getToken(RefreshTokenUrl(authToken.RefreshToken));
             return new AuthResponse(AuthResponseStatus.SUCCESS.GetCode(), AuthResponseStatus.SUCCESS.GetDesc(), token);
         }
 
@@ -103,16 +103,16 @@ namespace Come.CollectiveOAuth.Request
          * @return 返回授权地址
          * @since 1.9.3
          */
-        public override string authorize(string state)
+        public override string Authorize(string state)
         {
-            return UrlBuilder.fromBaseUrl(source.authorize())
-                .queryParam("response_type", "code")
-                .queryParam("client_id", config.clientId)
-                .queryParam("redirect_uri", config.redirectUri)
-                .queryParam("response_mode", "query")
-                .queryParam("scope", "offline_access%20" + (config.scope.IsNullOrWhiteSpace() ? "user.read%20mail.read" : config.scope))
-                .queryParam("state", getRealState(state))
-                .build();
+            return UrlBuilder.FromBaseUrl(source.Authorize())
+                .QueryParam("response_type", "code")
+                .QueryParam("client_id", config.ClientId)
+                .QueryParam("redirect_uri", config.RedirectUri)
+                .QueryParam("response_mode", "query")
+                .QueryParam("scope", "offline_access%20" + (config.Scope.IsNullOrWhiteSpace() ? "user.read%20mail.read" : config.Scope))
+                .QueryParam("state", GetRealState(state))
+                .Build();
         }
 
         /**
@@ -123,14 +123,14 @@ namespace Come.CollectiveOAuth.Request
          */
         protected override string accessTokenUrl(string code)
         {
-            return UrlBuilder.fromBaseUrl(source.accessToken())
-                .queryParam("code", code)
-                .queryParam("client_id", config.clientId)
-                .queryParam("client_secret", config.clientSecret)
-                .queryParam("grant_type", "authorization_code")
-                .queryParam("scope", config.scope.IsNullOrWhiteSpace() ? "user.read%20mail.read" : config.scope)
-                .queryParam("redirect_uri", config.redirectUri)
-                .build();
+            return UrlBuilder.FromBaseUrl(source.AccessToken())
+                .QueryParam("code", code)
+                .QueryParam("client_id", config.ClientId)
+                .QueryParam("client_secret", config.ClientSecret)
+                .QueryParam("grant_type", "authorization_code")
+                .QueryParam("scope", config.Scope.IsNullOrWhiteSpace() ? "user.read%20mail.read" : config.Scope)
+                .QueryParam("redirect_uri", config.RedirectUri)
+                .Build();
         }
 
         /**
@@ -139,9 +139,9 @@ namespace Come.CollectiveOAuth.Request
          * @param authToken 用户授权后的token
          * @return 返回获取userInfo的url
          */ 
-        protected override string userInfoUrl(AuthToken authToken)
+        protected override string UserInfoUrl(AuthToken authToken)
         {
-            return UrlBuilder.fromBaseUrl(source.userInfo()).build();
+            return UrlBuilder.FromBaseUrl(source.UserInfo()).Build();
         }
 
         /**
@@ -150,16 +150,16 @@ namespace Come.CollectiveOAuth.Request
          * @param refreshToken 用户授权后的token
          * @return 返回获取accessToken的url
          */
-        protected override string refreshTokenUrl(string refreshToken)
+        protected override string RefreshTokenUrl(string refreshToken)
         {
-            return UrlBuilder.fromBaseUrl(source.refresh())
-                .queryParam("client_id", config.clientId)
-                .queryParam("client_secret", config.clientSecret)
-                .queryParam("refresh_token", refreshToken)
-                .queryParam("grant_type", "refresh_token")
-                .queryParam("scope", config.scope.IsNullOrWhiteSpace() ? "user.read%20mail.read" : config.scope)
-                .queryParam("redirect_uri", config.redirectUri)
-                .build();
+            return UrlBuilder.FromBaseUrl(source.Refresh())
+                .QueryParam("client_id", config.ClientId)
+                .QueryParam("client_secret", config.ClientSecret)
+                .QueryParam("refresh_token", refreshToken)
+                .QueryParam("grant_type", "refresh_token")
+                .QueryParam("scope", config.Scope.IsNullOrWhiteSpace() ? "user.read%20mail.read" : config.Scope)
+                .QueryParam("redirect_uri", config.RedirectUri)
+                .Build();
         }
 
 
@@ -172,7 +172,7 @@ namespace Come.CollectiveOAuth.Request
         {
             if (dic.ContainsKey("error"))
             {
-                throw new Exception(dic.getString("error_description"));
+                throw new Exception(dic.GetString("error_description"));
             }
         }
     }

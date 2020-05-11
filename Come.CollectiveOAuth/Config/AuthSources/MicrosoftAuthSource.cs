@@ -7,32 +7,32 @@ namespace Come.CollectiveOAuth.Config
      */
     public class MicrosoftAuthSource : IAuthSource
     {
-        public string authorize()
+        public string Authorize()
         {
             return "https://login.microsoftonline.com/common/oauth2/v2.0/authorize";
         }
 
-        public string accessToken()
+        public string AccessToken()
         {
             return "https://login.microsoftonline.com/common/oauth2/v2.0/token";
         }
 
-        public string userInfo()
+        public string UserInfo()
         {
             return "https://graph.microsoft.com/v1.0/me";
         }
 
-        public string revoke()
+        public string Revoke()
         {
             throw new System.NotImplementedException();
         }
 
-        public string refresh()
+        public string Refresh()
         {
             return "https://login.microsoftonline.com/common/oauth2/v2.0/token";
         }
 
-        public string getName()
+        public string GetName()
         {
             return DefaultAuthSourceEnum.MICROSOFT.ToString();
         }

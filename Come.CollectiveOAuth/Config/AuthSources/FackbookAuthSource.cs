@@ -7,32 +7,32 @@ namespace Come.CollectiveOAuth.Config
      */
     public class FackbookAuthSource : IAuthSource
     {
-        public string authorize()
+        public string Authorize()
         {
             return "https://www.facebook.com/v3.3/dialog/oauth";
         }
 
-        public string accessToken()
+        public string AccessToken()
         {
             return "https://graph.facebook.com/v3.3/oauth/access_token";
         }
 
-        public string userInfo()
+        public string UserInfo()
         {
             return "https://graph.facebook.com/v3.3/me";
         }
 
-        public string revoke()
+        public string Revoke()
         {
             throw new System.NotImplementedException();
         }
 
-        public string refresh()
+        public string Refresh()
         {
             throw new System.NotImplementedException();
         }
 
-        public string getName()
+        public string GetName()
         {
             return DefaultAuthSourceEnum.FACEBOOK.ToString();
         }

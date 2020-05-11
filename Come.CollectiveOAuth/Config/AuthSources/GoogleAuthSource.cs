@@ -7,32 +7,32 @@ namespace Come.CollectiveOAuth.Config
      */
     public class GoogleAuthSource : IAuthSource
     {
-        public string authorize()
+        public string Authorize()
         {
             return "https://accounts.google.com/o/oauth2/v2/auth";
         }
 
-        public string accessToken()
+        public string AccessToken()
         {
             return "https://www.googleapis.com/oauth2/v4/token";
         }
 
-        public string userInfo()
+        public string UserInfo()
         {
             return "https://www.googleapis.com/oauth2/v3/userinfo";
         }
 
-        public string revoke()
+        public string Revoke()
         {
             throw new System.NotImplementedException();
         }
 
-        public string refresh()
+        public string Refresh()
         {
             throw new System.NotImplementedException();
         }
 
-        public string getName()
+        public string GetName()
         {
             return DefaultAuthSourceEnum.GOOGLE.ToString();
         }

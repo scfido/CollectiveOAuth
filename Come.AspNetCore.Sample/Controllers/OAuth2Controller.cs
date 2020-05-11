@@ -34,7 +34,7 @@ namespace Come.AspNetCore.Sample.Controllers
         {
             AuthRequestFactory authRequest = new AuthRequestFactory();
             var request = authRequest.getRequest(authSource);
-            var authorize = request.authorize(AuthStateUtils.createState());
+            var authorize = request.Authorize(AuthStateUtils.CreateState());
             Console.WriteLine(authorize);
             return Redirect(authorize);
         }

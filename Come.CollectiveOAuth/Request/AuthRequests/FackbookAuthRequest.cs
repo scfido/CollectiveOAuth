@@ -19,41 +19,41 @@ namespace Come.CollectiveOAuth.Request
         {
         }
 
-        protected override AuthToken getAccessToken(AuthCallback authCallback)
+        protected override AuthToken GetAccessToken(AuthCallback authCallback)
         {
-            var response = doPostAuthorizationCode(authCallback.code);
-            var accessTokenObject = response.parseObject();
+            var response = DoPostAuthorizationCode(authCallback.Code);
+            var accessTokenObject = response.ParseObject();
             this.checkResponse(accessTokenObject);
 
             var authToken = new AuthToken
             {
-                accessToken = accessTokenObject.getString("access_token"),
-                expireIn = accessTokenObject.getInt32("expires_in"),
-                tokenType = accessTokenObject.getString("token_type"),
-                code = authCallback.code
+                AccessToken = accessTokenObject.GetString("access_token"),
+                ExpireIn = accessTokenObject.GetInt32("expires_in"),
+                TokenType = accessTokenObject.GetString("token_type"),
+                Code = authCallback.Code
             };
             return authToken;
         }
 
-        protected override AuthUser getUserInfo(AuthToken authToken)
+        protected override AuthUser GetUserInfo(AuthToken authToken)
         {
-            var response = doGetUserInfo(authToken);
-            var userObj = response.parseObject();
+            var response = DoGetUserInfo(authToken);
+            var userObj = response.ParseObject();
             this.checkResponse(userObj);
 
             var authUser = new AuthUser
             {
-                uuid = userObj.getString("id"),
-                username = userObj.getString("name"),
-                nickname = userObj.getString("name"),
-                avatar = getUserPicture(userObj),
-                location = userObj.getString("locale"),
-                email = userObj.getString("email"),
-                gender = GlobalAuthUtil.getRealGender(userObj.getString("gender")),
-                token = authToken,
-                source = source.getName(),
-                originalUser = userObj,
-                originalUserStr = response
+                Uuid = userObj.GetString("id"),
+                Username = userObj.GetString("name"),
+                Nickname = userObj.GetString("name"),
+                Avatar = getUserPicture(userObj),
+                Location = userObj.GetString("locale"),
+                Email = userObj.GetString("email"),
+                Gender = GlobalAuthUtil.GetRealGender(userObj.GetString("gender")),
+                Token = authToken,
+                Source = source.GetName(),
+                OriginalUser = userObj,
+                OriginalUserStr = response
             };
             return authUser;
         }
@@ -63,11 +63,11 @@ namespace Come.CollectiveOAuth.Request
             string picture = null;
             if (userObj.ContainsKey("picture"))
             {
-                var pictureObj = userObj.getString("picture").parseObject();
-                pictureObj = pictureObj.getString("data").parseObject();
+                var pictureObj = userObj.GetString("picture").ParseObject();
+                pictureObj = pictureObj.GetString("data").ParseObject();
                 if (null != pictureObj)
                 {
-                    picture = pictureObj.getString("url");
+                    picture = pictureObj.GetString("url");
                 }
             }
             return picture;
@@ -79,12 +79,12 @@ namespace Come.CollectiveOAuth.Request
          * @param authToken 用户token
          * @return 返回获取userInfo的url
          */
-        protected override string userInfoUrl(AuthToken authToken)
+        protected override string UserInfoUrl(AuthToken authToken)
         {
-            return UrlBuilder.fromBaseUrl(source.userInfo())
-                .queryParam("access_token", authToken.accessToken)
-                .queryParam("fields", "id,name,birthday,gender,hometown,email,devices,picture.width(400)")
-                .build();
+            return UrlBuilder.FromBaseUrl(source.UserInfo())
+                .QueryParam("access_token", authToken.AccessToken)
+                .QueryParam("fields", "id,name,birthday,gender,hometown,email,devices,picture.width(400)")
+                .Build();
         }
 
 
@@ -97,7 +97,7 @@ namespace Come.CollectiveOAuth.Request
         {
             if (dic.ContainsKey("error"))
             {
-                throw new Exception($"{dic.getString("error").parseObject().getString("message")}");
+                throw new Exception($"{dic.GetString("error").ParseObject().GetString("message")}");
             }
         }
     }

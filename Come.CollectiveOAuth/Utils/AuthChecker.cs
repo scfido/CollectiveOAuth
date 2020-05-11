@@ -20,7 +20,7 @@ namespace Come.CollectiveOAuth.Utils
         public static bool isSupportedAuth(ClientConfig config, IAuthSource source)
         {
 
-            bool isSupported = !string.IsNullOrWhiteSpace(config.clientId) && !string.IsNullOrWhiteSpace(config.clientSecret) && !string.IsNullOrWhiteSpace(config.redirectUri);
+            bool isSupported = !string.IsNullOrWhiteSpace(config.ClientId) && !string.IsNullOrWhiteSpace(config.ClientSecret) && !string.IsNullOrWhiteSpace(config.RedirectUri);
             /*if (isSupported && DefaultAuthSource.ALIPAY == source)
             {
                 isSupported = StringUtils.isNotEmpty(config.getAlipayPublicKey());
@@ -49,19 +49,19 @@ namespace Come.CollectiveOAuth.Utils
          */
         public static void checkConfig(ClientConfig config, IAuthSource source)
         {
-            string redirectUri = config.redirectUri;
-            if (!GlobalAuthUtil.isHttpProtocol(redirectUri) && !GlobalAuthUtil.isHttpsProtocol(redirectUri))
+            string redirectUri = config.RedirectUri;
+            if (!GlobalAuthUtil.IsHttpProtocol(redirectUri) && !GlobalAuthUtil.IsHttpsProtocol(redirectUri))
             {
                 throw new Exception(AuthResponseStatus.ILLEGAL_REDIRECT_URI.GetDesc());
             }
             // facebook的回调地址必须为https的链接
-            if ("FACEBOOK".Equals(source.getName().ToUpper()) && !GlobalAuthUtil.isHttpsProtocol(redirectUri))
+            if ("FACEBOOK".Equals(source.GetName().ToUpper()) && !GlobalAuthUtil.IsHttpsProtocol(redirectUri))
             {
                 // Facebook's redirect uri must use the HTTPS protocol
                 throw new Exception(AuthResponseStatus.ILLEGAL_REDIRECT_URI.GetDesc());
             }
             // 支付宝在创建回调地址时，不允许使用localhost或者127.0.0.1
-            if ("ALIPAY".Equals(source.getName().ToUpper()) && GlobalAuthUtil.isLocalHost(redirectUri))
+            if ("ALIPAY".Equals(source.GetName().ToUpper()) && GlobalAuthUtil.IsLocalHost(redirectUri))
             {
                 // The redirect uri of alipay is forbidden to use localhost or 127.0.0.1
                 throw new Exception(AuthResponseStatus.ILLEGAL_REDIRECT_URI.GetDesc());
@@ -77,16 +77,16 @@ namespace Come.CollectiveOAuth.Utils
          * @param callback 从第三方授权回调回来时传入的参数集合
          * @since 1.8.0
          */
-        public static void checkCode(IAuthSource source, AuthCallback callback)
+        public static void CheckCode(IAuthSource source, AuthCallback callback)
         {
-            string code = callback.code;
-            if (source.getName().ToUpper().Equals(DefaultAuthSourceEnum.ALIPAY_MP.ToString()))
+            string code = callback.Code;
+            if (source.GetName().ToUpper().Equals(DefaultAuthSourceEnum.ALIPAY_MP.ToString()))
             {
-                code = callback.auth_code;
+                code = callback.AuthCode;
             }
-            else if ("HUAWEI".Equals(source.getName().ToUpper()))
+            else if ("HUAWEI".Equals(source.GetName().ToUpper()))
             {
-                code = callback.authorization_code;
+                code = callback.AuthorizationCode;
             }
             if (string.IsNullOrWhiteSpace(code))
             {
@@ -104,9 +104,9 @@ namespace Come.CollectiveOAuth.Utils
          * @param state          {@code state}一定不为空
          * @param authStateCache {@code authStateCache} state缓存实现
          */
-        public static void checkState(string state, IAuthSource source, IAuthStateCache authStateCache)
+        public static void CheckState(string state, IAuthSource source, IAuthStateCache authStateCache)
         {
-            if (string.IsNullOrWhiteSpace(state) || !authStateCache.containsKey(state))
+            if (string.IsNullOrWhiteSpace(state) || !authStateCache.ContainsKey(state))
             {
                 throw new Exception(AuthResponseStatus.ILLEGAL_STATUS.GetDesc());
             }

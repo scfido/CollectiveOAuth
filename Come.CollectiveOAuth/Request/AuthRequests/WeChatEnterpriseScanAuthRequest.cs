@@ -25,25 +25,25 @@ namespace Come.CollectiveOAuth.Request
         * @param authCallback 回调返回的参数
         * @return 所有信息
         */
-        protected override AuthToken getAccessToken(AuthCallback authCallback)
+        protected override AuthToken GetAccessToken(AuthCallback authCallback)
         {
-            string response = doGetAuthorizationCode(accessTokenUrl(authCallback.code));
-            var jsonObj = response.parseObject();
+            string response = DoGetAuthorizationCode(accessTokenUrl(authCallback.Code));
+            var jsonObj = response.ParseObject();
 
             this.checkResponse(jsonObj);
 
             var authToken = new AuthToken();
-            authToken.accessToken = jsonObj.getString("access_token");
-            authToken.expireIn = jsonObj.getInt32("expires_in");
-            authToken.code = authCallback.code;
+            authToken.AccessToken = jsonObj.GetString("access_token");
+            authToken.ExpireIn = jsonObj.GetInt32("expires_in");
+            authToken.Code = authCallback.Code;
 
             return authToken;
         }
 
-        protected override AuthUser getUserInfo(AuthToken authToken)
+        protected override AuthUser GetUserInfo(AuthToken authToken)
         {
-            string response = doGetUserInfo(authToken);
-            var jsonObj = response.parseObject();
+            string response = DoGetUserInfo(authToken);
+            var jsonObj = response.ParseObject();
             this.checkResponse(jsonObj);
 
             // 返回 OpenId 或其他，均代表非当前企业用户，不支持
@@ -51,24 +51,25 @@ namespace Come.CollectiveOAuth.Request
             {
                 throw new Exception(AuthResponseStatus.UNIDENTIFIED_PLATFORM.GetDesc());
             }
-            string userId = jsonObj.getString("UserId");
-            string userDetailResponse = getUserDetail(authToken.accessToken, userId);
-            var userDetailObj = userDetailResponse.parseObject();
+            string userId = jsonObj.GetString("UserId");
+            string userDetailResponse = getUserDetail(authToken.AccessToken, userId);
+            var userDetailObj = userDetailResponse.ParseObject();
             this.checkResponse(userDetailObj);
 
             var authUser = new AuthUser();
-            authUser.username = userDetailObj.getString("name");
-            authUser.nickname = userDetailObj.getString("alias");
-            authUser.avatar = userDetailObj.getString("avatar");
-            authUser.location = userDetailObj.getString("address");
-            authUser.email = userDetailObj.getString("email");
-            authUser.uuid = userDetailObj.getString("userId");
-            authUser.token = authToken;
-            authUser.source = source.getName();
-            authUser.gender = GlobalAuthUtil.getWechatRealGender(userDetailObj.getString("gender"));
+            authUser.Username = userDetailObj.GetString("name");
+            authUser.Nickname = userDetailObj.GetString("alias");
+            authUser.Avatar = userDetailObj.GetString("avatar");
+            authUser.Location = userDetailObj.GetString("address");
+            authUser.Email = userDetailObj.GetString("email");
+            authUser.Uuid = userDetailObj.GetString("userid");
+            authUser.Enable = userDetailObj.GetString("enable") == "1"; // Todo:处理不同方式定义bool的更好处理方式"true/false","1/0"
+            authUser.Token = authToken;
+            authUser.Source = source.GetName();
+            authUser.Gender = GlobalAuthUtil.GetWechatRealGender(userDetailObj.GetString("gender"));
 
-            authUser.originalUser = userDetailObj;
-            authUser.originalUserStr = response;
+            authUser.OriginalUser = userDetailObj;
+            authUser.OriginalUserStr = response;
             return authUser;
         }
 
@@ -80,9 +81,9 @@ namespace Come.CollectiveOAuth.Request
          */
         private void checkResponse(Dictionary<string, object> dic)
         {
-            if (dic.ContainsKey("errcode") && dic.getInt32("errcode") != 0)
+            if (dic.ContainsKey("errcode") && dic.GetInt32("errcode") != 0)
             {
-                throw new Exception($"errcode: {dic.getString("errcode")}, errmsg: {dic.getString("errmsg")}");
+                throw new Exception($"errcode: {dic.GetString("errcode")}, errmsg: {dic.GetString("errmsg")}");
             }
         }
 
@@ -93,14 +94,14 @@ namespace Come.CollectiveOAuth.Request
          * @return 返回授权地址
          * @since 1.9.3
          */
-        public override string authorize(string state)
+        public override string Authorize(string state)
         {
-            return UrlBuilder.fromBaseUrl(source.authorize())
-                .queryParam("appid", config.clientId)
-                .queryParam("agentid", config.agentId)
-                .queryParam("redirect_uri", config.redirectUri)
-                .queryParam("state", getRealState(state))
-                .build();
+            return UrlBuilder.FromBaseUrl(source.Authorize())
+                .QueryParam("appid", config.ClientId)
+                .QueryParam("agentid", config.AgentId)
+                .QueryParam("redirect_uri", config.RedirectUri)
+                .QueryParam("state", GetRealState(state))
+                .Build();
         }
 
         /**
@@ -111,10 +112,10 @@ namespace Come.CollectiveOAuth.Request
          */
         protected override string accessTokenUrl(String code)
         {
-            return UrlBuilder.fromBaseUrl(source.accessToken())
-                .queryParam("corpid", config.clientId)
-                .queryParam("corpsecret", config.clientSecret)
-                .build();
+            return UrlBuilder.FromBaseUrl(source.AccessToken())
+                .QueryParam("corpid", config.ClientId)
+                .QueryParam("corpsecret", config.ClientSecret)
+                .Build();
         }
 
         /**
@@ -123,12 +124,12 @@ namespace Come.CollectiveOAuth.Request
          * @param authToken 用户授权后的token
          * @return 返回获取userInfo的url
          */
-        protected override string userInfoUrl(AuthToken authToken)
+        protected override string UserInfoUrl(AuthToken authToken)
         {
-            return UrlBuilder.fromBaseUrl(source.userInfo())
-                .queryParam("access_token", authToken.accessToken)
-                .queryParam("code", authToken.code)
-                .build();
+            return UrlBuilder.FromBaseUrl(source.UserInfo())
+                .QueryParam("access_token", authToken.AccessToken)
+                .QueryParam("code", authToken.Code)
+                .Build();
         }
 
         /**
@@ -140,10 +141,10 @@ namespace Come.CollectiveOAuth.Request
          */
         private string getUserDetail(string accessToken, string userId)
         {
-            string userDetailUrl = UrlBuilder.fromBaseUrl("https://qyapi.weixin.qq.com/cgi-bin/user/get")
-                .queryParam("access_token", accessToken)
-                .queryParam("userid", userId)
-                .build();
+            string userDetailUrl = UrlBuilder.FromBaseUrl("https://qyapi.weixin.qq.com/cgi-bin/user/get")
+                .QueryParam("access_token", accessToken)
+                .QueryParam("userid", userId)
+                .Build();
             return HttpUtils.RequestGet(userDetailUrl);
         }
     }

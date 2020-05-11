@@ -7,32 +7,32 @@ namespace Come.CollectiveOAuth.Config
      */
     public class MeituanAuthSource : IAuthSource
     {
-        public string authorize()
+        public string Authorize()
         {
             return "https://openapi.waimai.meituan.com/oauth/authorize";
         }
 
-        public string accessToken()
+        public string AccessToken()
         {
             return "https://openapi.waimai.meituan.com/oauth/access_token";
         }
 
-        public string userInfo()
+        public string UserInfo()
         {
             return "https://openapi.waimai.meituan.com/oauth/userinfo";
         }
 
-        public string revoke()
+        public string Revoke()
         {
             throw new System.NotImplementedException();
         }
 
-        public string refresh()
+        public string Refresh()
         {
             return "https://openapi.waimai.meituan.com/oauth/refresh_token";
         }
 
-        public string getName()
+        public string GetName()
         {
             return DefaultAuthSourceEnum.MEITUAN.ToString();
         }

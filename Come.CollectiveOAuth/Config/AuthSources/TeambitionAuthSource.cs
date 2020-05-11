@@ -7,32 +7,32 @@ namespace Come.CollectiveOAuth.Config
      */
     public class TeambitionAuthSource : IAuthSource
     {
-        public string authorize()
+        public string Authorize()
         {
             return "https://account.teambition.com/oauth2/authorize";
         }
 
-        public string accessToken()
+        public string AccessToken()
         {
             return "https://account.teambition.com/oauth2/access_token";
         }
 
-        public string userInfo()
+        public string UserInfo()
         {
             return "https://api.teambition.com/users/me";
         }
 
-        public string revoke()
+        public string Revoke()
         {
             throw new System.NotImplementedException();
         }
 
-        public string refresh()
+        public string Refresh()
         {
             return "https://account.teambition.com/oauth2/refresh_token";
         }
 
-        public string getName()
+        public string GetName()
         {
             return DefaultAuthSourceEnum.TEAMBITION.ToString();
         }

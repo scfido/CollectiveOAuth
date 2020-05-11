@@ -27,18 +27,18 @@ namespace Come.CollectiveOAuth.Request
         * @see AuthDefaultRequest#authorize()
         * @see AuthDefaultRequest#authorize(String)
         */
-        protected override AuthToken getAccessToken(AuthCallback authCallback)
+        protected override AuthToken GetAccessToken(AuthCallback authCallback)
         {
             var reqParams = new Dictionary<string, object>
             {
                 { "grant_type", "authorization_code" },
-                { "code", authCallback.authorization_code },
-                { "client_id", config.clientId },
-                { "client_secret", config.clientSecret },
-                { "redirect_uri", config.redirectUri },
+                { "code", authCallback.AuthorizationCode },
+                { "client_id", config.ClientId },
+                { "client_secret", config.ClientSecret },
+                { "redirect_uri", config.RedirectUri },
             };
 
-            var response = HttpUtils.RequestFormPost(source.accessToken(), reqParams.spellParams());
+            var response = HttpUtils.RequestFormPost(source.AccessToken(), reqParams.SpellParams());
 
             return getAuthToken(response);
         }
@@ -50,34 +50,34 @@ namespace Come.CollectiveOAuth.Request
          * @return 用户信息
          * @see AuthDefaultRequest#getAccessToken(AuthCallback)
          */
-        protected override AuthUser getUserInfo(AuthToken authToken)
+        protected override AuthUser GetUserInfo(AuthToken authToken)
         {
             var reqParams = new Dictionary<string, object>
             {
                 { "nsp_ts", DateTime.Now.Ticks },
-                { "access_token", authToken.accessToken },
+                { "access_token", authToken.AccessToken },
                 { "nsp_fmt", "JS" },
                 { "nsp_svc", "OpenUP.User.getInfo" },
             };
 
-            var response = HttpUtils.RequestFormPost(source.userInfo(), reqParams.spellParams());
-            var userObj = response.parseObject();
+            var response = HttpUtils.RequestFormPost(source.UserInfo(), reqParams.SpellParams());
+            var userObj = response.ParseObject();
 
             this.checkResponse(userObj);
 
             AuthUserGender gender = getRealGender(userObj);
 
             var authUser = new AuthUser();
-            authUser.uuid = userObj.getString("userID");
-            authUser.username = userObj.getString("userName");
-            authUser.nickname = userObj.getString("userName");
-            authUser.gender = gender;
-            authUser.avatar = userObj.getString("headPictureURL");
+            authUser.Uuid = userObj.GetString("userID");
+            authUser.Username = userObj.GetString("userName");
+            authUser.Nickname = userObj.GetString("userName");
+            authUser.Gender = gender;
+            authUser.Avatar = userObj.GetString("headPictureURL");
           
-            authUser.token = authToken;
-            authUser.source = source.getName();
-            authUser.originalUser = userObj;
-            authUser.originalUserStr = response;
+            authUser.Token = authToken;
+            authUser.Source = source.GetName();
+            authUser.OriginalUser = userObj;
+            authUser.OriginalUserStr = response;
             return authUser;
         }
 
@@ -87,30 +87,30 @@ namespace Come.CollectiveOAuth.Request
          * @param authToken 登录成功后返回的Token信息
          * @return AuthResponse
          */
-        public override AuthResponse refresh(AuthToken authToken)
+        public override AuthResponse Refresh(AuthToken authToken)
         {
             var reqParams = new Dictionary<string, object>
             {
-                { "client_id", config.clientId },
-                { "client_secret", config.clientSecret },
-                { "refresh_token", authToken.refreshToken },
+                { "client_id", config.ClientId },
+                { "client_secret", config.ClientSecret },
+                { "refresh_token", authToken.RefreshToken },
                 { "grant_type", "refresh_token" },
             };
-            var response = HttpUtils.RequestFormPost(source.refresh(), reqParams.spellParams());
+            var response = HttpUtils.RequestFormPost(source.Refresh(), reqParams.SpellParams());
 
             return new AuthResponse(AuthResponseStatus.SUCCESS.GetCode(), AuthResponseStatus.SUCCESS.GetDesc(), getAuthToken(response));
         }
 
         private AuthToken getAuthToken(string response)
         {
-            var authTokenObj = response.parseObject();
+            var authTokenObj = response.ParseObject();
 
             this.checkResponse(authTokenObj);
 
             var authToken = new AuthToken();
-            authToken.accessToken = authTokenObj.getString("access_token");
-            authToken.refreshToken = authTokenObj.getString("refresh_token");
-            authToken.expireIn = authTokenObj.getInt32("expires_in");
+            authToken.AccessToken = authTokenObj.GetString("access_token");
+            authToken.RefreshToken = authTokenObj.GetString("refresh_token");
+            authToken.ExpireIn = authTokenObj.GetInt32("expires_in");
             return authToken;
         }
 
@@ -121,16 +121,16 @@ namespace Come.CollectiveOAuth.Request
          * @return 返回授权地址
          * @since 1.9.3
          */
-        public override string authorize(string state)
+        public override string Authorize(string state)
         {
-            return UrlBuilder.fromBaseUrl(source.authorize())
-                .queryParam("response_type", "code")
-                .queryParam("client_id", config.clientId)
-                .queryParam("redirect_uri", config.redirectUri)
-                .queryParam("access_type", "offline")
-                .queryParam("scope", config.scope.IsNullOrWhiteSpace() ? "https%3A%2F%2Fwww.huawei.com%2Fauth%2Faccount%2Fbase.profile" : config.scope)
-                .queryParam("state", getRealState(state))
-                .build();
+            return UrlBuilder.FromBaseUrl(source.Authorize())
+                .QueryParam("response_type", "code")
+                .QueryParam("client_id", config.ClientId)
+                .QueryParam("redirect_uri", config.RedirectUri)
+                .QueryParam("access_type", "offline")
+                .QueryParam("scope", config.Scope.IsNullOrWhiteSpace() ? "https%3A%2F%2Fwww.huawei.com%2Fauth%2Faccount%2Fbase.profile" : config.Scope)
+                .QueryParam("state", GetRealState(state))
+                .Build();
         }
 
         /**
@@ -141,13 +141,13 @@ namespace Come.CollectiveOAuth.Request
          */
         protected override string accessTokenUrl(string code)
         {
-            return UrlBuilder.fromBaseUrl(source.accessToken())
-                .queryParam("grant_type", "authorization_code")
-                .queryParam("code", code)
-                .queryParam("client_id", config.clientId)
-                .queryParam("client_secret", config.clientSecret)
-                .queryParam("redirect_uri", config.redirectUri)
-                .build();
+            return UrlBuilder.FromBaseUrl(source.AccessToken())
+                .QueryParam("grant_type", "authorization_code")
+                .QueryParam("code", code)
+                .QueryParam("client_id", config.ClientId)
+                .QueryParam("client_secret", config.ClientSecret)
+                .QueryParam("redirect_uri", config.RedirectUri)
+                .Build();
         }
 
         /**
@@ -156,14 +156,14 @@ namespace Come.CollectiveOAuth.Request
          * @param authToken token
          * @return 返回获取userInfo的url
          */
-        protected override string userInfoUrl(AuthToken authToken)
+        protected override string UserInfoUrl(AuthToken authToken)
         {
-            return UrlBuilder.fromBaseUrl(source.userInfo())
-                .queryParam("nsp_ts", DateTime.Now.Ticks)
-                .queryParam("access_token", authToken.accessToken)
-                .queryParam("nsp_fmt", "JS")
-                .queryParam("nsp_svc", "OpenUP.User.getInfo")
-                .build();
+            return UrlBuilder.FromBaseUrl(source.UserInfo())
+                .QueryParam("nsp_ts", DateTime.Now.Ticks)
+                .QueryParam("access_token", authToken.AccessToken)
+                .QueryParam("nsp_fmt", "JS")
+                .QueryParam("nsp_svc", "OpenUP.User.getInfo")
+                .Build();
         }
 
         /**
@@ -174,9 +174,9 @@ namespace Come.CollectiveOAuth.Request
          */
         private AuthUserGender getRealGender(Dictionary<string, object> userObj)
         {
-            int genderCodeInt = userObj.getInt32("gender");
+            int genderCodeInt = userObj.GetInt32("gender");
             string genderCode = genderCodeInt == 1 ? "0" : (genderCodeInt == 0) ? "1" : genderCodeInt + "";
-            return GlobalAuthUtil.getRealGender(genderCode);
+            return GlobalAuthUtil.GetRealGender(genderCode);
         }
 
         /**
@@ -188,11 +188,11 @@ namespace Come.CollectiveOAuth.Request
         {
             if (dic.ContainsKey("NSP_STATUS"))
             {
-                throw new Exception(dic.getString("error"));
+                throw new Exception(dic.GetString("error"));
             }
             if (dic.ContainsKey("error"))
             {
-                throw new Exception(dic.getString("sub_error") + ":" + dic.getString("error_description"));
+                throw new Exception(dic.GetString("sub_error") + ":" + dic.GetString("error_description"));
             }
         }
     }

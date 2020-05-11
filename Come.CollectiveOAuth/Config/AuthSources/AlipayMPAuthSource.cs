@@ -7,32 +7,32 @@ namespace Come.CollectiveOAuth.Config
      */
     public class AlipayMPAuthSource : IAuthSource
     {
-        public string authorize()
+        public string Authorize()
         {
             return "https://openauth.alipay.com/oauth2/publicAppAuthorize.htm";
         }
 
-        public string accessToken()
+        public string AccessToken()
         {
             return "https://openapi.alipay.com/gateway.do";
         }
 
-        public string userInfo()
+        public string UserInfo()
         {
             return "https://openapi.alipay.com/gateway.do";
         }
 
-        public string revoke()
+        public string Revoke()
         {
             throw new System.NotImplementedException();
         }
 
-        public string refresh()
+        public string Refresh()
         {
             throw new System.NotImplementedException();
         }
 
-        public string getName()
+        public string GetName()
         {
             return DefaultAuthSourceEnum.ALIPAY_MP.ToString();
         }

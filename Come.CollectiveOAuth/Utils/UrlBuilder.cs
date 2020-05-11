@@ -17,7 +17,7 @@ namespace Come.CollectiveOAuth.Utils
          * @param baseUrl 基础路径
          * @return the new {@code UrlBuilder}
          */
-        public static UrlBuilder fromBaseUrl(string baseUrl)
+        public static UrlBuilder FromBaseUrl(string baseUrl)
         {
             UrlBuilder builder = new UrlBuilder();
             builder.baseUrl = baseUrl;
@@ -31,7 +31,7 @@ namespace Come.CollectiveOAuth.Utils
          * @param value 参数值
          * @return this UrlBuilder
          */
-        public UrlBuilder queryParam(string key, object value)
+        public UrlBuilder QueryParam(string key, object value)
         {
             if (string.IsNullOrWhiteSpace(key))
             {
@@ -48,9 +48,9 @@ namespace Come.CollectiveOAuth.Utils
          *
          * @return url
          */
-        public string build()
+        public string Build()
         {
-            return this.build(false);
+            return this.Build(false);
         }
 
         /**
@@ -59,14 +59,14 @@ namespace Come.CollectiveOAuth.Utils
          * @param encode 转码
          * @return url
          */
-        public string build(bool encode)
+        public string Build(bool encode)
         {
             if (this.paramDic.Count == 0 || this.paramDic == null)
             {
                 return this.baseUrl;
             }
-            string baseUrl = this.appendIfNotContain(this.baseUrl, "?", "&");
-            string paramString = GlobalAuthUtil.parseMapToString(this.paramDic);
+            string baseUrl = this.AppendIfNotContain(this.baseUrl, "?", "&");
+            string paramString = GlobalAuthUtil.ParseMapToString(this.paramDic);
             return baseUrl + paramString;
         }
 
@@ -79,7 +79,7 @@ namespace Come.CollectiveOAuth.Utils
         * @param otherwise 当{@code appendStr}不满足时追加到{@code str}后的内容
         * @return 追加后的字符串
         */
-        public string appendIfNotContain(string str, string appendStr, string otherwise)
+        public string AppendIfNotContain(string str, string appendStr, string otherwise)
         {
             if (string.IsNullOrWhiteSpace(str) || string.IsNullOrWhiteSpace(appendStr))
             {

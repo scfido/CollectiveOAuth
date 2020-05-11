@@ -19,72 +19,72 @@ namespace Come.CollectiveOAuth.Request
         {
         }
 
-        protected override AuthToken getAccessToken(AuthCallback authCallback)
+        protected override AuthToken GetAccessToken(AuthCallback authCallback)
         {
-            string response = doPostAuthorizationCode(authCallback.code);
-            var accessTokenObject = response.parseObject();
+            string response = DoPostAuthorizationCode(authCallback.Code);
+            var accessTokenObject = response.ParseObject();
             this.checkResponse(accessTokenObject);
 
             var authToken = new AuthToken();
-            authToken.accessToken = accessTokenObject.getString("access_token");
-            authToken.refreshToken = accessTokenObject.getString("refresh_token");
-            authToken.expireIn = accessTokenObject.getInt32("expires_in");
-            authToken.scope = accessTokenObject.getString("scope");
+            authToken.AccessToken = accessTokenObject.GetString("access_token");
+            authToken.RefreshToken = accessTokenObject.GetString("refresh_token");
+            authToken.ExpireIn = accessTokenObject.GetInt32("expires_in");
+            authToken.Scope = accessTokenObject.GetString("scope");
 
             return authToken;
         }
 
-        protected override AuthUser getUserInfo(AuthToken authToken)
+        protected override AuthUser GetUserInfo(AuthToken authToken)
         {
-            string response = doGetUserInfo(authToken);
-            var userObj = response.parseObject();
+            string response = DoGetUserInfo(authToken);
+            var userObj = response.ParseObject();
             this.checkResponse(userObj);
 
             var authUser = new AuthUser();
-            authUser.uuid = userObj.getString("userid");
-            authUser.username = userObj.getString("username");
-            authUser.nickname = userObj.getString("username");
+            authUser.Uuid = userObj.GetString("userid");
+            authUser.Username = userObj.GetString("username");
+            authUser.Nickname = userObj.GetString("username");
 
-            string protrait = userObj.getString("portrait");
-            authUser.avatar = protrait.IsNullOrWhiteSpace() ? null : string.Format("http://himg.bdimg.com/sys/portrait/item/{0}.jpg", protrait);
+            string protrait = userObj.GetString("portrait");
+            authUser.Avatar = protrait.IsNullOrWhiteSpace() ? null : string.Format("http://himg.bdimg.com/sys/portrait/item/{0}.jpg", protrait);
 
-            authUser.remark = userObj.getString("userdetail");
-            authUser.gender = GlobalAuthUtil.getRealGender(userObj.getString("sex"));
+            authUser.Remark = userObj.GetString("userdetail");
+            authUser.Gender = GlobalAuthUtil.GetRealGender(userObj.GetString("sex"));
 
-            authUser.token = authToken;
-            authUser.source = source.getName();
-            authUser.originalUser = userObj;
-            authUser.originalUserStr = response;
+            authUser.Token = authToken;
+            authUser.Source = source.GetName();
+            authUser.OriginalUser = userObj;
+            authUser.OriginalUserStr = response;
             return authUser;
         }
 
         public override AuthResponse revoke(AuthToken authToken)
         {
-            string response = doGetRevoke(authToken);
-            var revokeObj = response.parseObject();
+            string response = DoGetRevoke(authToken);
+            var revokeObj = response.ParseObject();
             this.checkResponse(revokeObj);
             // 返回1表示取消授权成功，否则失败
-            AuthResponseStatus status = revokeObj.getInt32("result") == 1 ? AuthResponseStatus.SUCCESS : AuthResponseStatus.FAILURE;
+            AuthResponseStatus status = revokeObj.GetInt32("result") == 1 ? AuthResponseStatus.SUCCESS : AuthResponseStatus.FAILURE;
             return new AuthResponse(status.GetCode(), status.GetDesc());
         }
 
-        public override AuthResponse refresh(AuthToken authToken)
+        public override AuthResponse Refresh(AuthToken authToken)
         {
-            string refreshUrl = UrlBuilder.fromBaseUrl(this.source.refresh())
-                .queryParam("grant_type", "refresh_token")
-                .queryParam("refresh_token", authToken.refreshToken)
-                .queryParam("client_id", this.config.clientId)
-                .queryParam("client_secret", this.config.clientSecret)
-                .build();
+            string refreshUrl = UrlBuilder.FromBaseUrl(this.source.Refresh())
+                .QueryParam("grant_type", "refresh_token")
+                .QueryParam("refresh_token", authToken.RefreshToken)
+                .QueryParam("client_id", this.config.ClientId)
+                .QueryParam("client_secret", this.config.ClientSecret)
+                .Build();
             string response = HttpUtils.RequestGet(refreshUrl);
-            var accessTokenObject = response.parseObject();
+            var accessTokenObject = response.ParseObject();
             this.checkResponse(accessTokenObject);
 
             var newAuthToken = new AuthToken();
-            newAuthToken.accessToken = accessTokenObject.getString("access_token");
-            newAuthToken.refreshToken = accessTokenObject.getString("refresh_token");
-            newAuthToken.expireIn = accessTokenObject.getInt32("expires_in");
-            newAuthToken.scope = accessTokenObject.getString("scope");
+            newAuthToken.AccessToken = accessTokenObject.GetString("access_token");
+            newAuthToken.RefreshToken = accessTokenObject.GetString("refresh_token");
+            newAuthToken.ExpireIn = accessTokenObject.GetInt32("expires_in");
+            newAuthToken.Scope = accessTokenObject.GetString("scope");
 
             return new AuthResponse(AuthResponseStatus.SUCCESS.GetCode(), AuthResponseStatus.SUCCESS.GetDesc(), newAuthToken);
         }
@@ -96,16 +96,16 @@ namespace Come.CollectiveOAuth.Request
          * @return 返回授权地址
          * @since 1.9.3
          */
-        public override string authorize(string state)
+        public override string Authorize(string state)
         {
-            return UrlBuilder.fromBaseUrl(source.authorize())
-                .queryParam("response_type", "code")
-                .queryParam("client_id", config.clientId)
-                .queryParam("redirect_uri", config.redirectUri)
-                .queryParam("display", "page")
-                .queryParam("scope", "basic")
-                .queryParam("state", getRealState(state))
-                .build();
+            return UrlBuilder.FromBaseUrl(source.Authorize())
+                .QueryParam("response_type", "code")
+                .QueryParam("client_id", config.ClientId)
+                .QueryParam("redirect_uri", config.RedirectUri)
+                .QueryParam("display", "page")
+                .QueryParam("scope", "basic")
+                .QueryParam("state", GetRealState(state))
+                .Build();
         }
 
         /**
@@ -118,9 +118,9 @@ namespace Come.CollectiveOAuth.Request
         {
             if (dic.ContainsKey("error") || dic.ContainsKey("error_code"))
             {
-                throw new Exception($@"error_code: {dic.getString("error_code")}," +
-                    $" error_description: {dic.getString("error_description")}," +
-                    $" error_msg: {dic.getString("error_msg")}");
+                throw new Exception($@"error_code: {dic.GetString("error_code")}," +
+                    $" error_description: {dic.GetString("error_description")}," +
+                    $" error_msg: {dic.GetString("error_msg")}");
             }
         }
     }

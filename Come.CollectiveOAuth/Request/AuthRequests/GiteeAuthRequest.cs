@@ -19,43 +19,43 @@ namespace Come.CollectiveOAuth.Request
         {
         }
 
-        protected override AuthToken getAccessToken(AuthCallback authCallback)
+        protected override AuthToken GetAccessToken(AuthCallback authCallback)
         {
-            string response = doPostAuthorizationCode(authCallback.code);
-            var accessTokenObject = response.parseObject();
+            string response = DoPostAuthorizationCode(authCallback.Code);
+            var accessTokenObject = response.ParseObject();
             this.checkResponse(accessTokenObject);
 
             var authToken = new AuthToken();
-            authToken.accessToken = accessTokenObject.getString("access_token");
-            authToken.refreshToken = accessTokenObject.getString("refresh_token");
-            authToken.tokenType = accessTokenObject.getString("token_type");
-            authToken.expireIn = accessTokenObject.getInt32("expires_in");
-            authToken.scope = accessTokenObject.getString("scope");
+            authToken.AccessToken = accessTokenObject.GetString("access_token");
+            authToken.RefreshToken = accessTokenObject.GetString("refresh_token");
+            authToken.TokenType = accessTokenObject.GetString("token_type");
+            authToken.ExpireIn = accessTokenObject.GetInt32("expires_in");
+            authToken.Scope = accessTokenObject.GetString("scope");
 
             return authToken;
         }
 
-        protected override AuthUser getUserInfo(AuthToken authToken)
+        protected override AuthUser GetUserInfo(AuthToken authToken)
         {
-            string response = doGetUserInfo(authToken);
-            var userObj = response.parseObject();
+            string response = DoGetUserInfo(authToken);
+            var userObj = response.ParseObject();
             this.checkResponse(userObj);
 
             var authUser = new AuthUser();
-            authUser.uuid = userObj.getString("id");
-            authUser.username = userObj.getString("login");
-            authUser.nickname = userObj.getString("name");
-            authUser.avatar = userObj.getString("avatar_url");
-            authUser.blog = userObj.getString("blog");
-            authUser.company = userObj.getString("company");
-            authUser.location = userObj.getString("address");
-            authUser.email = userObj.getString("email");
-            authUser.remark = userObj.getString("bio");
-            authUser.gender = AuthUserGender.UNKNOWN;
-            authUser.token = authToken;
-            authUser.source = source.getName();
-            authUser.originalUser = userObj;
-            authUser.originalUserStr = response;
+            authUser.Uuid = userObj.GetString("id");
+            authUser.Username = userObj.GetString("login");
+            authUser.Nickname = userObj.GetString("name");
+            authUser.Avatar = userObj.GetString("avatar_url");
+            authUser.Blog = userObj.GetString("blog");
+            authUser.Company = userObj.GetString("company");
+            authUser.Location = userObj.GetString("address");
+            authUser.Email = userObj.GetString("email");
+            authUser.Remark = userObj.GetString("bio");
+            authUser.Gender = AuthUserGender.Unknown;
+            authUser.Token = authToken;
+            authUser.Source = source.GetName();
+            authUser.OriginalUser = userObj;
+            authUser.OriginalUserStr = response;
             return authUser;
         }
 
@@ -70,7 +70,7 @@ namespace Come.CollectiveOAuth.Request
         {
             if (dic.ContainsKey("error"))
             {
-                throw new Exception($"{dic.getString("error_description")}");
+                throw new Exception($"{dic.GetString("error_description")}");
             }
         }
     }

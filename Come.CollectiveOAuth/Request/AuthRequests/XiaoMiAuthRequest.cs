@@ -20,72 +20,72 @@ namespace Come.CollectiveOAuth.Request
         {
         }
 
-        protected override AuthToken getAccessToken(AuthCallback authCallback)
+        protected override AuthToken GetAccessToken(AuthCallback authCallback)
         {
-            return getToken(accessTokenUrl(authCallback.code));
+            return getToken(accessTokenUrl(authCallback.Code));
         }
 
         private AuthToken getToken(string accessTokenUrl)
         {
             string response = HttpUtils.RequestGet(accessTokenUrl);
             string jsonStr = response.Replace(PREFIX, "");
-            var accessTokenObject = jsonStr.parseObject();
+            var accessTokenObject = jsonStr.ParseObject();
 
             if (accessTokenObject.ContainsKey("error"))
             {
-                throw new Exception(accessTokenObject.getString("error_description"));
+                throw new Exception(accessTokenObject.GetString("error_description"));
             }
 
             var authToken = new AuthToken();
-            authToken.accessToken = accessTokenObject.getString("access_token");
-            authToken.refreshToken = accessTokenObject.getString("refresh_token");
-            authToken.tokenType = accessTokenObject.getString("token_type");
-            authToken.expireIn = accessTokenObject.getInt32("expires_in");
-            authToken.scope = accessTokenObject.getString("scope");
+            authToken.AccessToken = accessTokenObject.GetString("access_token");
+            authToken.RefreshToken = accessTokenObject.GetString("refresh_token");
+            authToken.TokenType = accessTokenObject.GetString("token_type");
+            authToken.ExpireIn = accessTokenObject.GetInt32("expires_in");
+            authToken.Scope = accessTokenObject.GetString("scope");
 
-            authToken.openId = accessTokenObject.getString("openId");
-            authToken.macAlgorithm = accessTokenObject.getString("mac_algorithm");
-            authToken.macKey = accessTokenObject.getString("mac_key");
+            authToken.OpenId = accessTokenObject.GetString("openId");
+            authToken.MacAlgorithm = accessTokenObject.GetString("mac_algorithm");
+            authToken.MacKey = accessTokenObject.GetString("mac_key");
 
             return authToken;
         }
 
-        protected override AuthUser getUserInfo(AuthToken authToken)
+        protected override AuthUser GetUserInfo(AuthToken authToken)
         {
             // 获取用户信息
-            string userResponse = doGetUserInfo(authToken);
+            string userResponse = DoGetUserInfo(authToken);
 
-            var userProfile = userResponse.parseObject();
-            if ("error".Equals(userProfile.getString("result"), StringComparison.OrdinalIgnoreCase))
+            var userProfile = userResponse.ParseObject();
+            if ("error".Equals(userProfile.GetString("result"), StringComparison.OrdinalIgnoreCase))
             {
-                throw new Exception(userProfile.getString("description"));
+                throw new Exception(userProfile.GetString("description"));
             }
 
-            var userObj = userProfile.getString("data").parseObject();
+            var userObj = userProfile.GetString("data").ParseObject();
 
             var authUser = new AuthUser();
-            authUser.uuid = userObj.getString("id");
-            authUser.username = userObj.getString("miliaoNick");
-            authUser.nickname = userObj.getString("miliaoNick");
-            authUser.avatar = userObj.getString("miliaoIcon");
-            authUser.email = userObj.getString("mail");
-            authUser.gender = AuthUserGender.UNKNOWN;
+            authUser.Uuid = userObj.GetString("id");
+            authUser.Username = userObj.GetString("miliaoNick");
+            authUser.Nickname = userObj.GetString("miliaoNick");
+            authUser.Avatar = userObj.GetString("miliaoIcon");
+            authUser.Email = userObj.GetString("mail");
+            authUser.Gender = AuthUserGender.Unknown;
 
-            authUser.token = authToken;
-            authUser.source = source.getName();
-            authUser.originalUser = userObj;
-            authUser.originalUserStr = userResponse;
+            authUser.Token = authToken;
+            authUser.Source = source.GetName();
+            authUser.OriginalUser = userObj;
+            authUser.OriginalUserStr = userResponse;
             //return authUser;
 
             // 获取用户邮箱手机号等信息
-            string emailPhoneUrl = $"{{https://open.account.xiaomi.com/user/phoneAndEmail}}?clientId={config.clientId}&token={authToken.accessToken}";
+            string emailPhoneUrl = $"{{https://open.account.xiaomi.com/user/phoneAndEmail}}?clientId={config.ClientId}&token={authToken.AccessToken}";
 
             string emailResponse = HttpUtils.RequestGet(emailPhoneUrl);
-            var userEmailPhone = emailResponse.parseObject();
-            if (!"error".Equals(userEmailPhone.getString("result"), StringComparison.OrdinalIgnoreCase))
+            var userEmailPhone = emailResponse.ParseObject();
+            if (!"error".Equals(userEmailPhone.GetString("result"), StringComparison.OrdinalIgnoreCase))
             {
-                var emailPhone = userEmailPhone.getString("data").parseObject();
-                authUser.email = emailPhone.getString("email");
+                var emailPhone = userEmailPhone.GetString("data").ParseObject();
+                authUser.Email = emailPhone.GetString("email");
             }
             else
             {
@@ -101,9 +101,9 @@ namespace Come.CollectiveOAuth.Request
          * @param authToken 登录成功后返回的Token信息
          * @return AuthResponse
          */
-        public override AuthResponse refresh(AuthToken authToken)
+        public override AuthResponse Refresh(AuthToken authToken)
         {
-            var token = getToken(refreshTokenUrl(authToken.refreshToken));
+            var token = getToken(RefreshTokenUrl(authToken.RefreshToken));
             return new AuthResponse(AuthResponseStatus.SUCCESS.GetCode(), AuthResponseStatus.SUCCESS.GetDesc(), token);
         }
 
@@ -114,16 +114,16 @@ namespace Come.CollectiveOAuth.Request
          * @return 返回授权地址
          * @since 1.9.3
          */
-        public override String authorize(String state)
+        public override String Authorize(String state)
         {
-            return UrlBuilder.fromBaseUrl(source.authorize())
-                .queryParam("response_type", "code")
-                .queryParam("client_id", config.clientId)
-                .queryParam("redirect_uri", config.redirectUri)
-                .queryParam("scope", config.scope.IsNullOrWhiteSpace() ? "user/profile%20user/openIdV2%20user/phoneAndEmail" : config.scope)
-                .queryParam("skip_confirm", "false")
-                .queryParam("state", getRealState(state))
-                .build();
+            return UrlBuilder.FromBaseUrl(source.Authorize())
+                .QueryParam("response_type", "code")
+                .QueryParam("client_id", config.ClientId)
+                .QueryParam("redirect_uri", config.RedirectUri)
+                .QueryParam("scope", config.Scope.IsNullOrWhiteSpace() ? "user/profile%20user/openIdV2%20user/phoneAndEmail" : config.Scope)
+                .QueryParam("skip_confirm", "false")
+                .QueryParam("state", GetRealState(state))
+                .Build();
         }
 
         /**
@@ -132,12 +132,12 @@ namespace Come.CollectiveOAuth.Request
          * @param authToken 用户授权后的token
          * @return 返回获取userInfo的url
          */
-        protected override string userInfoUrl(AuthToken authToken)
+        protected override string UserInfoUrl(AuthToken authToken)
         {
-            return UrlBuilder.fromBaseUrl(source.userInfo())
-                .queryParam("clientId", config.clientId)
-                .queryParam("token", authToken.accessToken)
-                .build();
+            return UrlBuilder.FromBaseUrl(source.UserInfo())
+                .QueryParam("clientId", config.ClientId)
+                .QueryParam("token", authToken.AccessToken)
+                .Build();
         }
 
     }

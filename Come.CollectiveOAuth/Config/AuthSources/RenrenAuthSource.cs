@@ -7,32 +7,32 @@ namespace Come.CollectiveOAuth.Config
      */
     public class RenrenAuthSource : IAuthSource
     {
-        public string authorize()
+        public string Authorize()
         {
             return "https://graph.renren.com/oauth/authorize";
         }
 
-        public string accessToken()
+        public string AccessToken()
         {
             return "https://graph.renren.com/oauth/token";
         }
 
-        public string userInfo()
+        public string UserInfo()
         {
             return "https://api.renren.com/v2/user/get";
         }
 
-        public string revoke()
+        public string Revoke()
         {
             throw new System.NotImplementedException();
         }
 
-        public string refresh()
+        public string Refresh()
         {
             return "https://graph.renren.com/oauth/token";
         }
 
-        public string getName()
+        public string GetName()
         {
             return DefaultAuthSourceEnum.RENREN.ToString();
         }

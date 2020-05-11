@@ -24,19 +24,19 @@ namespace Come.CollectiveOAuth.Request
         }
 
 
-        protected override AuthToken getAccessToken(AuthCallback authCallback)
+        protected override AuthToken GetAccessToken(AuthCallback authCallback)
         {
             var authToken = new AuthToken();
-            authToken.accessCode = authCallback.code;
+            authToken.AccessCode = authCallback.Code;
             return authToken;
         }
 
-        protected override AuthUser getUserInfo(AuthToken authToken)
+        protected override AuthUser GetUserInfo(AuthToken authToken)
         {
-            var client = new DefaultDingTalkClient(source.userInfo());
+            var client = new DefaultDingTalkClient(source.UserInfo());
             OapiSnsGetuserinfoBycodeRequest req = new OapiSnsGetuserinfoBycodeRequest();
-            req.TmpAuthCode = authToken.accessCode;
-            OapiSnsGetuserinfoBycodeResponse response = client.Execute(req, config.clientId, config.clientSecret);
+            req.TmpAuthCode = authToken.AccessCode;
+            OapiSnsGetuserinfoBycodeResponse response = client.Execute(req, config.ClientId, config.ClientSecret);
 
             if (response.IsError)
             {
@@ -44,19 +44,19 @@ namespace Come.CollectiveOAuth.Request
             }
             var userObj = response.UserInfo;
 
-            authToken.openId = userObj.Openid;
-            authToken.unionId = userObj.Unionid;
+            authToken.OpenId = userObj.Openid;
+            authToken.UnionId = userObj.Unionid;
 
             var authUser = new AuthUser();
-            authUser.uuid = userObj.Unionid;
-            authUser.username = userObj.Nick;
-            authUser.nickname = userObj.Nick;
-            authUser.gender = AuthUserGender.UNKNOWN;
+            authUser.Uuid = userObj.Unionid;
+            authUser.Username = userObj.Nick;
+            authUser.Nickname = userObj.Nick;
+            authUser.Gender = AuthUserGender.Unknown;
 
-            authUser.token = authToken;
-            authUser.source = source.getName();
-            authUser.originalUser = response;
-            authUser.originalUserStr = JsonConvert.SerializeObject(response);
+            authUser.Token = authToken;
+            authUser.Source = source.GetName();
+            authUser.OriginalUser = response;
+            authUser.OriginalUserStr = JsonConvert.SerializeObject(response);
             return authUser;
 
         }
@@ -68,15 +68,15 @@ namespace Come.CollectiveOAuth.Request
          * @return 返回授权地址
          * @since 1.9.3
          */
-        public override string authorize(string state)
+        public override string Authorize(string state)
         {
-            return UrlBuilder.fromBaseUrl(source.authorize())
-                .queryParam("response_type", "code")
-                .queryParam("appid", config.clientId)
-                .queryParam("scope", config.scope.IsNullOrWhiteSpace() ? "snsapi_login" : config.scope)
-                .queryParam("redirect_uri", config.redirectUri)
-                .queryParam("state", getRealState(state))
-                .build();
+            return UrlBuilder.FromBaseUrl(source.Authorize())
+                .QueryParam("response_type", "code")
+                .QueryParam("appid", config.ClientId)
+                .QueryParam("scope", config.Scope.IsNullOrWhiteSpace() ? "snsapi_login" : config.Scope)
+                .QueryParam("redirect_uri", config.RedirectUri)
+                .QueryParam("state", GetRealState(state))
+                .Build();
         }
 
     }

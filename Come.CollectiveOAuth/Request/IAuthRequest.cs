@@ -24,7 +24,7 @@ namespace Come.CollectiveOAuth.Request
      *
      * @return 返回授权地址
      */
-        string authorize();
+        string Authorize();
 
         /**
          * 返回带{@code state}参数的授权url，授权回调时会带上这个{@code state}
@@ -32,7 +32,7 @@ namespace Come.CollectiveOAuth.Request
          * @param state state 验证授权流程的参数，可以防止csrf
          * @return 返回授权地址
          */
-        string authorize(string state);
+        string Authorize(string state);
 
         /**
          * 第三方登录
@@ -40,7 +40,7 @@ namespace Come.CollectiveOAuth.Request
          * @param authCallback 用于接收回调参数的实体
          * @return 返回登录成功后的用户信息
          */
-        AuthResponse login(AuthCallback authCallback);
+        AuthResponse Login(AuthCallback authCallback);
 
         /**
          * 撤销授权
@@ -56,6 +56,6 @@ namespace Come.CollectiveOAuth.Request
          * @param authToken 登录成功后返回的Token信息
          * @return AuthResponse
          */
-        AuthResponse refresh(AuthToken authToken);
+        AuthResponse Refresh(AuthToken authToken);
     }
 }

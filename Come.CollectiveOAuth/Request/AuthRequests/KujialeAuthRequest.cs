@@ -27,65 +27,65 @@ namespace Come.CollectiveOAuth.Request
           * @return 返回授权地址
           * @since 1.11.0
           */
-        public override string authorize(string state)
+        public override string Authorize(string state)
         {
-             var urlBuilder = UrlBuilder.fromBaseUrl(source.authorize())
-                .queryParam("response_type", "code")
-                .queryParam("client_id", config.clientId)
-                .queryParam("redirect_uri", config.redirectUri)
-                .queryParam("state", getRealState(state))
-                .queryParam("scope", config.scope.IsNullOrWhiteSpace() ? "get_user_info": config.scope)
-                .build();
+             var urlBuilder = UrlBuilder.FromBaseUrl(source.Authorize())
+                .QueryParam("response_type", "code")
+                .QueryParam("client_id", config.ClientId)
+                .QueryParam("redirect_uri", config.RedirectUri)
+                .QueryParam("state", GetRealState(state))
+                .QueryParam("scope", config.Scope.IsNullOrWhiteSpace() ? "get_user_info": config.Scope)
+                .Build();
              return urlBuilder;
         }
 
-        protected override AuthToken getAccessToken(AuthCallback authCallback)
+        protected override AuthToken GetAccessToken(AuthCallback authCallback)
         {
-            var response = doPostAuthorizationCode(authCallback.code);
+            var response = DoPostAuthorizationCode(authCallback.Code);
             return getAuthToken(response);
         }
 
         private AuthToken getAuthToken(string response)
         {
-            var accessTokenObject = response.parseObject();
+            var accessTokenObject = response.ParseObject();
             this.checkResponse(accessTokenObject);
 
-            var resultObject = accessTokenObject.getJSONObject("d");
+            var resultObject = accessTokenObject.GetJSONObject("d");
 
             var authToken = new AuthToken();
-            authToken.accessToken = resultObject.getString("accessToken");
-            authToken.refreshToken = resultObject.getString("refreshToken");
-            authToken.expireIn = resultObject.getInt32("expiresIn");
+            authToken.AccessToken = resultObject.GetString("accessToken");
+            authToken.RefreshToken = resultObject.GetString("refreshToken");
+            authToken.ExpireIn = resultObject.GetInt32("expiresIn");
             return authToken;
         }
 
         
-        protected override AuthUser getUserInfo(AuthToken authToken)
+        protected override AuthUser GetUserInfo(AuthToken authToken)
         {
             string openId = this.getOpenId(authToken);
 
-            var userInfoUrl = UrlBuilder.fromBaseUrl(source.userInfo())
-                .queryParam("access_token", authToken.accessToken)
-                .queryParam("open_id", openId)
-                .build();
+            var userInfoUrl = UrlBuilder.FromBaseUrl(source.UserInfo())
+                .QueryParam("access_token", authToken.AccessToken)
+                .QueryParam("open_id", openId)
+                .Build();
 
             var response = HttpUtils.RequestGet(userInfoUrl);
-            var resObj = response.parseObject();
+            var resObj = response.ParseObject();
             this.checkResponse(resObj);
 
-            var userObj = resObj.getJSONObject("d");
+            var userObj = resObj.GetJSONObject("d");
 
             var authUser = new AuthUser();
-            authUser.uuid = userObj.getString("openId");
-            authUser.username = userObj.getString("userName");
-            authUser.nickname = userObj.getString("userName");
-            authUser.avatar = userObj.getString("avatar");
-            authUser.gender = AuthUserGender.UNKNOWN;
+            authUser.Uuid = userObj.GetString("openId");
+            authUser.Username = userObj.GetString("userName");
+            authUser.Nickname = userObj.GetString("userName");
+            authUser.Avatar = userObj.GetString("avatar");
+            authUser.Gender = AuthUserGender.Unknown;
 
-            authUser.token = authToken;
-            authUser.source = source.getName();
-            authUser.originalUser = resObj;
-            authUser.originalUserStr = response;
+            authUser.Token = authToken;
+            authUser.Source = source.GetName();
+            authUser.OriginalUser = resObj;
+            authUser.OriginalUserStr = response;
             return authUser;
         }
 
@@ -97,18 +97,18 @@ namespace Come.CollectiveOAuth.Request
          */
         private string getOpenId(AuthToken authToken)
         {
-            var openIdUrl = UrlBuilder.fromBaseUrl("https://oauth.kujiale.com/oauth2/auth/user")
-                .queryParam("access_token", authToken.accessToken)
-                .build();
+            var openIdUrl = UrlBuilder.FromBaseUrl("https://oauth.kujiale.com/oauth2/auth/user")
+                .QueryParam("access_token", authToken.AccessToken)
+                .Build();
             var response = HttpUtils.RequestGet(openIdUrl);
-            var accessTokenObject = response.parseObject();
+            var accessTokenObject = response.ParseObject();
             this.checkResponse(accessTokenObject);
-            return accessTokenObject.getString("d");
+            return accessTokenObject.GetString("d");
         }
 
-        public override AuthResponse refresh(AuthToken authToken)
+        public override AuthResponse Refresh(AuthToken authToken)
         {
-            var refreshUrl = refreshTokenUrl(authToken.refreshToken);
+            var refreshUrl = RefreshTokenUrl(authToken.RefreshToken);
             var response = HttpUtils.RequestPost(refreshUrl);
             return new AuthResponse(AuthResponseStatus.SUCCESS.GetCode(), AuthResponseStatus.SUCCESS.GetDesc(), getAuthToken(response));
         }
@@ -126,9 +126,9 @@ namespace Come.CollectiveOAuth.Request
                 throw new Exception("请求所返回的数据为空!");
             }
 
-            if (!"0".Equals(dic.getString("c")))
+            if (!"0".Equals(dic.GetString("c")))
             {
-                throw new Exception($"{dic.getString("m")}");
+                throw new Exception($"{dic.GetString("m")}");
             }
         }
     }

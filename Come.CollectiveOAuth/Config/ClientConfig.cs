@@ -11,17 +11,17 @@
         /**
          * 客户端id：对应各平台的appKey
          */
-        public string clientId { get; set; }
+        public string ClientId { get; set; }
 
         /**
          * 客户端Secret：对应各平台的appSecret
          */
-        public string clientSecret { get; set; }
+        public string ClientSecret { get; set; }
 
         /**
          * 登录成功后的回调地址
          */
-        public string redirectUri { get; set; }
+        public string RedirectUri { get; set; }
 
         /**
          * 支付宝公钥：当选择支付宝登录时，该值可用
@@ -36,7 +36,7 @@
          * <p>
          * 1.7.1版本新增参数
          */
-        public string unionId { get; set; }
+        public string UnionId { get; set; }
 
         /**
          * Stack Overflow Key
@@ -44,20 +44,20 @@
          *
          * @since 1.9.0
          */
-        public string stackOverflowKey { get; set; }
+        public string StackOverflowKey { get; set; }
 
         /**
          * 企业微信，授权方的网页应用ID
          *
          * @since 1.10.0
          */
-        public string agentId { get; set; }
+        public string AgentId { get; set; }
 
         /**
          * 企业微信，授权方的网页应用ID
          *
          * @since 1.10.0
          */
-        public string scope { get; set; }
+        public string Scope { get; set; }
     }
 }

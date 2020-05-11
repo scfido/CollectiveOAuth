@@ -19,49 +19,49 @@ namespace Come.CollectiveOAuth.Request
         {
         }
 
-        protected override AuthToken getAccessToken(AuthCallback authCallback)
+        protected override AuthToken GetAccessToken(AuthCallback authCallback)
         {
-            string response = doGetAuthorizationCode(authCallback.code);
+            string response = DoGetAuthorizationCode(authCallback.Code);
             return getAuthToken(response);
         }
 
-        public override AuthResponse refresh(AuthToken authToken)
+        public override AuthResponse Refresh(AuthToken authToken)
         {
-            string response = HttpUtils.RequestGet(refreshTokenUrl(authToken.refreshToken));
+            string response = HttpUtils.RequestGet(RefreshTokenUrl(authToken.RefreshToken));
             return new AuthResponse(AuthResponseStatus.SUCCESS.GetCode(), AuthResponseStatus.SUCCESS.GetDesc(), getAuthToken(response));
         }
 
-        protected override AuthUser getUserInfo(AuthToken authToken)
+        protected override AuthUser GetUserInfo(AuthToken authToken)
         {
             string openId = this.getOpenId(authToken);
-            string response = doGetUserInfo(authToken);
-            var userObj = response.parseObject();
-            if (userObj.getInt32("ret") != 0)
+            string response = DoGetUserInfo(authToken);
+            var userObj = response.ParseObject();
+            if (userObj.GetInt32("ret") != 0)
             {
-                throw new Exception(userObj.getString("msg"));
+                throw new Exception(userObj.GetString("msg"));
             }
-            string avatar = userObj.getString("figureurl_qq_2");
+            string avatar = userObj.GetString("figureurl_qq_2");
             if (avatar.IsNullOrWhiteSpace())
             {
-                avatar = userObj.getString("figureurl_qq_1");
+                avatar = userObj.GetString("figureurl_qq_1");
             }
 
-            string location = $"{userObj.getString("province")}-{userObj.getString("city")}";
+            string location = $"{userObj.GetString("province")}-{userObj.GetString("city")}";
 
             var authUser = new AuthUser();
-            authUser.uuid = openId;
-            authUser.username = userObj.getString("nickname");
-            authUser.nickname = userObj.getString("nickname");
-            authUser.avatar = avatar;
-            authUser.location = location;
-            authUser.email = userObj.getString("email");
-            authUser.remark = userObj.getString("bio");
-            authUser.gender = GlobalAuthUtil.getRealGender(userObj.getString("gender"));
-            authUser.token = authToken;
-            authUser.source = source.getName();
+            authUser.Uuid = openId;
+            authUser.Username = userObj.GetString("nickname");
+            authUser.Nickname = userObj.GetString("nickname");
+            authUser.Avatar = avatar;
+            authUser.Location = location;
+            authUser.Email = userObj.GetString("email");
+            authUser.Remark = userObj.GetString("bio");
+            authUser.Gender = GlobalAuthUtil.GetRealGender(userObj.GetString("gender"));
+            authUser.Token = authToken;
+            authUser.Source = source.GetName();
 
-            authUser.originalUser = userObj;
-            authUser.originalUserStr = response;
+            authUser.OriginalUser = userObj;
+            authUser.OriginalUserStr = response;
             return authUser;
         }
 
@@ -74,10 +74,10 @@ namespace Come.CollectiveOAuth.Request
          */
         private string getOpenId(AuthToken authToken)
         {
-            var getOpenIdUrl = UrlBuilder.fromBaseUrl("https://graph.qq.com/oauth2.0/me")
-                                .queryParam("access_token", authToken.accessToken)
-                                .queryParam("unionid", config.unionId)
-                                .build();
+            var getOpenIdUrl = UrlBuilder.FromBaseUrl("https://graph.qq.com/oauth2.0/me")
+                                .QueryParam("access_token", authToken.AccessToken)
+                                .QueryParam("unionid", config.UnionId)
+                                .Build();
             string response = HttpUtils.RequestGet(getOpenIdUrl);
             if (!response.IsNullOrWhiteSpace())
             {
@@ -85,18 +85,18 @@ namespace Come.CollectiveOAuth.Request
                 string removePrefix = body.Replace("callback(", "");
                 string removeSuffix = removePrefix.Replace(");", "");
                 string openId = removeSuffix.Trim();
-                var openIdObj = openId.parseObject();
+                var openIdObj = openId.ParseObject();
                 if (openIdObj.ContainsKey("error"))
                 {
-                    throw new Exception(openIdObj.getString("error") + ":" + openIdObj.getString("error_description"));
+                    throw new Exception(openIdObj.GetString("error") + ":" + openIdObj.GetString("error_description"));
                 }
-                authToken.openId = openIdObj.getString("openid");
+                authToken.OpenId = openIdObj.GetString("openid");
                 if (openIdObj.ContainsKey("unionid"))
                 {
-                    authToken.unionId = openIdObj.getString("unionid");
+                    authToken.UnionId = openIdObj.GetString("unionid");
                 }
 
-                return authToken.unionId.IsNullOrWhiteSpace() ? authToken.openId : authToken.unionId;
+                return authToken.UnionId.IsNullOrWhiteSpace() ? authToken.OpenId : authToken.UnionId;
             }
 
             throw new Exception("request error");
@@ -108,26 +108,26 @@ namespace Come.CollectiveOAuth.Request
          * @param authToken 用户授权token
          * @return 返回获取userInfo的url
          */
-        protected override string userInfoUrl(AuthToken authToken)
+        protected override string UserInfoUrl(AuthToken authToken)
         {
-            return UrlBuilder.fromBaseUrl(source.userInfo())
-                .queryParam("access_token", authToken.accessToken)
-                .queryParam("oauth_consumer_key", config.clientId)
-                .queryParam("openid", authToken.openId)
-                .build();
+            return UrlBuilder.FromBaseUrl(source.UserInfo())
+                .QueryParam("access_token", authToken.AccessToken)
+                .QueryParam("oauth_consumer_key", config.ClientId)
+                .QueryParam("openid", authToken.OpenId)
+                .Build();
         }
 
         private AuthToken getAuthToken(string response)
         {
-            var accessTokenObject = response.parseStringObject();
+            var accessTokenObject = response.ParseStringObject();
             if (!accessTokenObject.ContainsKey("access_token") || accessTokenObject.ContainsKey("code"))
             {
-                throw new Exception(accessTokenObject.getString("msg"));
+                throw new Exception(accessTokenObject.GetString("msg"));
             }
             var authToken = new AuthToken();
-            authToken.accessToken = accessTokenObject.getString("access_token");
-            authToken.expireIn = accessTokenObject.getInt32("expires_in");
-            authToken.refreshToken = accessTokenObject.getString("refresh_token");
+            authToken.AccessToken = accessTokenObject.GetString("access_token");
+            authToken.ExpireIn = accessTokenObject.GetInt32("expires_in");
+            authToken.RefreshToken = accessTokenObject.GetString("refresh_token");
 
             return authToken;
         }

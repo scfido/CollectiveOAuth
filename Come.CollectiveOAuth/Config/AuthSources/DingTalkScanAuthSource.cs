@@ -7,32 +7,32 @@ namespace Come.CollectiveOAuth.Config
      */
     public class DingTalkScanAuthSource : IAuthSource
     {
-        public string authorize()
+        public string Authorize()
         {
             return "https://oapi.dingtalk.com/connect/qrconnect";
         }
 
-        public string accessToken()
+        public string AccessToken()
         {
             throw new System.NotImplementedException(AuthResponseStatus.UNSUPPORTED.GetDesc());
         }
 
-        public string userInfo()
+        public string UserInfo()
         {
             return "https://oapi.dingtalk.com/sns/getuserinfo_bycode"; ;
         }
 
-        public string revoke()
+        public string Revoke()
         {
             throw new System.NotImplementedException();
         }
 
-        public string refresh()
+        public string Refresh()
         {
             throw new System.NotImplementedException();
         }
 
-        public string getName()
+        public string GetName()
         {
             return DefaultAuthSourceEnum.DINGTALK_SCAN.ToString();
         }

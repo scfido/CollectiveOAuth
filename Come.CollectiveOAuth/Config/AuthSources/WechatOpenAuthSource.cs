@@ -7,32 +7,32 @@ namespace Come.CollectiveOAuth.Config
      */
     public class WechatOpenAuthSource : IAuthSource
     {
-        public string accessToken()
+        public string AccessToken()
         {
             return "https://api.weixin.qq.com/sns/oauth2/access_token";
         }
 
-        public string authorize()
+        public string Authorize()
         {
             return "https://open.weixin.qq.com/connect/qrconnect";
         }
 
-        public string getName()
+        public string GetName()
         {
             return DefaultAuthSourceEnum.WECHAT_OPEN.ToString();
         }
 
-        public string refresh()
+        public string Refresh()
         {
             return "https://api.weixin.qq.com/sns/oauth2/refresh_token";
         }
 
-        public string revoke()
+        public string Revoke()
         {
             throw new System.NotImplementedException();
         }
 
-        public string userInfo()
+        public string UserInfo()
         {
             return "https://api.weixin.qq.com/sns/userinfo";
         }

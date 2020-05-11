@@ -15,7 +15,7 @@ namespace Come.CollectiveOAuth.Utils
         /// </summary>
         /// <param name="dic"></param>
         /// <returns></returns>
-        public static string parseMapToString(Dictionary<string, object> dicParams)
+        public static string ParseMapToString(Dictionary<string, object> dicParams)
         {
             StringBuilder builder = new StringBuilder();
             if (dicParams.Count > 0)
@@ -40,7 +40,7 @@ namespace Come.CollectiveOAuth.Utils
          * @param url 待验证的url
          * @return true: http协议, false: 非http协议
          */
-        public static bool isHttpProtocol(string url)
+        public static bool IsHttpProtocol(string url)
         {
             if (string.IsNullOrWhiteSpace(url))
             {
@@ -55,7 +55,7 @@ namespace Come.CollectiveOAuth.Utils
          * @param url 待验证的url
          * @return true: https协议, false: 非https协议
          */
-        public static bool isHttpsProtocol(string url)
+        public static bool IsHttpsProtocol(string url)
         {
             if (string.IsNullOrWhiteSpace(url))
             {
@@ -70,7 +70,7 @@ namespace Come.CollectiveOAuth.Utils
          * @param url 待验证的url
          * @return true: 本地主机（域名）, false: 非本地主机（域名）
          */
-        public static bool isLocalHost(string url)
+        public static bool IsLocalHost(string url)
         {
             return string.IsNullOrWhiteSpace(url) || url.Contains("127.0.0.1") || url.Contains("localhost");
         }
@@ -82,18 +82,18 @@ namespace Come.CollectiveOAuth.Utils
            * @param originalGender 用户第三方标注的原始性别
            * @return 用户性别
            */
-        public static AuthUserGender getRealGender(string originalGender)
+        public static AuthUserGender GetRealGender(string originalGender)
         {
-            if (null == originalGender || Convert.ToInt32(AuthUserGender.UNKNOWN).ToString().Equals(originalGender))
+            if (null == originalGender || Convert.ToInt32(AuthUserGender.Unknown).ToString().Equals(originalGender))
             {
-                return AuthUserGender.UNKNOWN;
+                return AuthUserGender.Unknown;
             }
             String[] males = { "m", "男", "1", "male" };
             if (males.ToList().Contains(originalGender.ToLower()))
             {
-                return AuthUserGender.MALE;
+                return AuthUserGender.Male;
             }
-            return AuthUserGender.FEMALE;
+            return AuthUserGender.Female;
         }
 
         /**
@@ -103,13 +103,13 @@ namespace Come.CollectiveOAuth.Utils
         * @return 用户性别
         * @since 1.13.2
         */
-        public static AuthUserGender getWechatRealGender(string originalGender)
+        public static AuthUserGender GetWechatRealGender(string originalGender)
         {
             if (string.IsNullOrWhiteSpace(originalGender) || "0".Equals(originalGender))
             {
-                return AuthUserGender.UNKNOWN;
+                return AuthUserGender.Unknown;
             }
-            return getRealGender(originalGender);
+            return GetRealGender(originalGender);
         }
 
 
@@ -119,7 +119,7 @@ namespace Come.CollectiveOAuth.Utils
          * @param value str
          * @return encode str
          */
-        public static string urlEncode(string value)
+        public static string UrlEncode(string value)
         {
             if (value == null)
             {
@@ -143,7 +143,7 @@ namespace Come.CollectiveOAuth.Utils
          * @param value str
          * @return decode str
          */
-        public static string urlDecode(string value)
+        public static string UrlDecode(string value)
         {
             if (value == null)
             {
@@ -166,7 +166,7 @@ namespace Come.CollectiveOAuth.Utils
          * @param value str
          * @return decode str
          */
-        public static T enumFromString<T>(string type)
+        public static T EnumFromString<T>(string type)
         {
             if (type.IsNullOrEmpty())
             {
@@ -184,7 +184,7 @@ namespace Come.CollectiveOAuth.Utils
         }
 
         //json字符串转换为字典集合
-        public static List<Dictionary<string, object>> parseListObject(this string jsonStr)
+        public static List<Dictionary<string, object>> ParseListObject(this string jsonStr)
         {
             var retDic = new List<Dictionary<string, object>>();
             if (!string.IsNullOrWhiteSpace(jsonStr))
@@ -202,7 +202,7 @@ namespace Come.CollectiveOAuth.Utils
 
 
         //json字符串转换为字典集合
-        public static Dictionary<string, object> parseObject(this string jsonStr)
+        public static Dictionary<string, object> ParseObject(this string jsonStr)
         {
             var retDic = new Dictionary<string, object>();
             if (!string.IsNullOrWhiteSpace(jsonStr))
@@ -226,7 +226,7 @@ namespace Come.CollectiveOAuth.Utils
 	     * @return 参数Map
 	     */
 
-        public static Dictionary<string, object> parseUrlObject(this string paramsStr)
+        public static Dictionary<string, object> ParseUrlObject(this string paramsStr)
         {
             Dictionary<string, object> res = new Dictionary<string, object>();
             try
@@ -242,7 +242,7 @@ namespace Come.CollectiveOAuth.Utils
                     paramsStr = paramsStr.Substring(pathEndPos + 1);
                 }
 
-                return parseStringObject(paramsStr);
+                return ParseStringObject(paramsStr);
             }
             catch (Exception e)
             {
@@ -256,7 +256,7 @@ namespace Come.CollectiveOAuth.Utils
         * @param accessTokenStr 待转换的字符串
         * @return map
         */
-        public static Dictionary<string, object> parseStringObject(this string accessTokenStr)
+        public static Dictionary<string, object> ParseStringObject(this string accessTokenStr)
         {
             Dictionary<string, object> res = new Dictionary<string, object>();
             if (accessTokenStr.Contains("&"))
@@ -267,7 +267,7 @@ namespace Come.CollectiveOAuth.Utils
                     if (field.Contains("="))
                     {
                         string[] keyValue = field.Split("=");
-                        res.Add(urlDecode(keyValue[0]), keyValue.Length == 2 ? urlDecode(keyValue[1]) : null);
+                        res.Add(UrlDecode(keyValue[0]), keyValue.Length == 2 ? UrlDecode(keyValue[1]) : null);
                     }
                 }
             }
@@ -278,7 +278,7 @@ namespace Come.CollectiveOAuth.Utils
         /// </summary>
         /// <param name="dic"></param>
         /// <returns></returns>
-        public static string spellParams(this Dictionary<string, object> dicParams)
+        public static string SpellParams(this Dictionary<string, object> dicParams)
         {
             StringBuilder builder = new StringBuilder();
             if (dicParams.Count > 0)
@@ -297,7 +297,7 @@ namespace Come.CollectiveOAuth.Utils
         }
 
         //object的字典集合
-        public static string getString(this Dictionary<string, object> dic, string key)
+        public static string GetString(this Dictionary<string, object> dic, string key)
         {
             if (dic == null)
                 return "";
@@ -318,16 +318,16 @@ namespace Come.CollectiveOAuth.Utils
         /// <param name="request"></param>
         /// <param name="paramName"></param>
         /// <returns></returns>
-        public static int getInt32(this Dictionary<string, object> request, string paramName)
+        public static int GetInt32(this Dictionary<string, object> request, string paramName)
         {
-            var paramValue = request.getString(paramName);
+            var paramValue = request.GetString(paramName);
             if (!string.IsNullOrWhiteSpace(paramValue))
             {
                 try
                 {
                     return Convert.ToInt32(paramValue);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     return -1;
                 }
@@ -341,9 +341,9 @@ namespace Come.CollectiveOAuth.Utils
         /// <param name="request"></param>
         /// <param name="paramName"></param>
         /// <returns></returns>
-        public static long getLong(this Dictionary<string, object> request, string paramName)
+        public static long GetLong(this Dictionary<string, object> request, string paramName)
         {
-            var paramValue = request.getString(paramName);
+            var paramValue = request.GetString(paramName);
             if (!string.IsNullOrWhiteSpace(paramValue))
             {
                 try
@@ -365,9 +365,9 @@ namespace Come.CollectiveOAuth.Utils
         /// <param name="request"></param>
         /// <param name="paramName"></param>
         /// <returns></returns>
-        public static bool getBool(this Dictionary<string, object> request, string paramName)
+        public static bool GetBool(this Dictionary<string, object> request, string paramName)
         {
-            var paramValue = request.getString(paramName);
+            var paramValue = request.GetString(paramName);
             if (!string.IsNullOrWhiteSpace(paramValue))
             {
                 try
@@ -388,14 +388,14 @@ namespace Come.CollectiveOAuth.Utils
         /// <param name="request"></param>
         /// <param name="paramName"></param>
         /// <returns></returns>
-        public static Dictionary<string, object> getJSONObject(this Dictionary<string, object> request, string paramName)
+        public static Dictionary<string, object> GetJSONObject(this Dictionary<string, object> request, string paramName)
         {
-            var paramValue = request.getString(paramName);
+            var paramValue = request.GetString(paramName);
             if (!string.IsNullOrWhiteSpace(paramValue))
             {
                 try
                 {
-                    return paramValue.parseObject();
+                    return paramValue.ParseObject();
                 }
                 catch (Exception ex)
                 {
@@ -411,14 +411,14 @@ namespace Come.CollectiveOAuth.Utils
         /// <param name="request"></param>
         /// <param name="paramName"></param>
         /// <returns></returns>
-        public static List<Dictionary<string, object>> getJSONArray(this Dictionary<string, object> request, string paramName)
+        public static List<Dictionary<string, object>> GetJSONArray(this Dictionary<string, object> request, string paramName)
         {
-            var paramValue = request.getString(paramName);
+            var paramValue = request.GetString(paramName);
             if (!string.IsNullOrWhiteSpace(paramValue))
             {
                 try
                 {
-                    return paramValue.parseListObject();
+                    return paramValue.ParseListObject();
                 }
                 catch (Exception ex)
                 {
@@ -459,7 +459,7 @@ namespace Come.CollectiveOAuth.Utils
         /// <returns></returns>
         public static DateTime? GetParamDateTime(this Dictionary<string, object> request, string paramName)
         {
-            var paramValue = request.getString(paramName);
+            var paramValue = request.GetString(paramName);
             if (!string.IsNullOrWhiteSpace(paramValue))
             {
                 try
@@ -483,7 +483,7 @@ namespace Come.CollectiveOAuth.Utils
         /// <returns></returns>
         public static double? GetParamDouble(this Dictionary<string, object> request, string paramName)
         {
-            var paramValue = request.getString(paramName);
+            var paramValue = request.GetString(paramName);
             if (!string.IsNullOrWhiteSpace(paramValue))
             {
                 try
@@ -506,7 +506,7 @@ namespace Come.CollectiveOAuth.Utils
         /// <returns></returns>
         public static Decimal? GetParamDecimal(this Dictionary<string, object> request, string paramName)
         {
-            var paramValue = request.getString(paramName);
+            var paramValue = request.GetString(paramName);
             if (!string.IsNullOrWhiteSpace(paramValue))
             {
                 try

@@ -20,43 +20,43 @@ namespace Come.CollectiveOAuth.Request
         {
         }
 
-        protected override AuthToken getAccessToken(AuthCallback authCallback)
+        protected override AuthToken GetAccessToken(AuthCallback authCallback)
         {
-            var response = doGetAuthorizationCode(authCallback.code);
-            var accessTokenObject = response.parseObject();
+            var response = DoGetAuthorizationCode(authCallback.Code);
+            var accessTokenObject = response.ParseObject();
 
-            this.checkResponse(accessTokenObject);
+            this.CheckResponse(accessTokenObject);
 
             var authToken = new AuthToken();
-            authToken.accessToken = accessTokenObject.getString("access_token");
-            authToken.expireIn = accessTokenObject.getInt32("expires_in");
-            authToken.openId = accessTokenObject.getString("open_id");
-            authToken.code = authCallback.code;
+            authToken.AccessToken = accessTokenObject.GetString("access_token");
+            authToken.ExpireIn = accessTokenObject.GetInt32("expires_in");
+            authToken.OpenId = accessTokenObject.GetString("open_id");
+            authToken.Code = authCallback.Code;
             return authToken;
         }
 
-        protected override AuthUser getUserInfo(AuthToken authToken)
+        protected override AuthUser GetUserInfo(AuthToken authToken)
         {
-            string userResponse = doGetUserInfo(authToken);
-            var userProfile = userResponse.parseObject();
-            this.checkResponse(userProfile);
+            string userResponse = DoGetUserInfo(authToken);
+            var userProfile = userResponse.ParseObject();
+            this.CheckResponse(userProfile);
 
-            var userObj = userProfile.getString("data").parseObject();
+            var userObj = userProfile.GetString("data").ParseObject();
 
-            bool isAnonymousUser = userObj.getInt32("uid_type") == 14;
+            bool isAnonymousUser = userObj.GetInt32("uid_type") == 14;
             string anonymousUserName = "匿名用户";
 
             var authUser = new AuthUser();
-            authUser.uuid = userObj.getString("uid");
-            authUser.username = isAnonymousUser ? anonymousUserName : userObj.getString("screen_name");
-            authUser.nickname = isAnonymousUser ? anonymousUserName : userObj.getString("screen_name");
-            authUser.avatar = userObj.getString("avatar_url");
-            authUser.remark = userObj.getString("description");
-            authUser.gender = GlobalAuthUtil.getRealGender(userObj.getString("gender"));
-            authUser.token = authToken;
-            authUser.source = source.getName();
-            authUser.originalUser = userProfile;
-            authUser.originalUserStr = userResponse;
+            authUser.Uuid = userObj.GetString("uid");
+            authUser.Username = isAnonymousUser ? anonymousUserName : userObj.GetString("screen_name");
+            authUser.Nickname = isAnonymousUser ? anonymousUserName : userObj.GetString("screen_name");
+            authUser.Avatar = userObj.GetString("avatar_url");
+            authUser.Remark = userObj.GetString("description");
+            authUser.Gender = GlobalAuthUtil.GetRealGender(userObj.GetString("gender"));
+            authUser.Token = authToken;
+            authUser.Source = source.GetName();
+            authUser.OriginalUser = userProfile;
+            authUser.OriginalUserStr = userResponse;
             return authUser;
         }
 
@@ -67,16 +67,16 @@ namespace Come.CollectiveOAuth.Request
          * @return 返回授权地址
          * @since 1.9.3
          */
-        public override string authorize(string state)
+        public override string Authorize(string state)
         {
-            return UrlBuilder.fromBaseUrl(source.authorize())
-                .queryParam("response_type", "code")
-                .queryParam("client_key", config.clientId)
-                .queryParam("redirect_uri", config.redirectUri)
-                .queryParam("auth_only", 1)
-                .queryParam("display", 0)
-                .queryParam("state", getRealState(state))
-                .build();
+            return UrlBuilder.FromBaseUrl(source.Authorize())
+                .QueryParam("response_type", "code")
+                .QueryParam("client_key", config.ClientId)
+                .QueryParam("redirect_uri", config.RedirectUri)
+                .QueryParam("auth_only", 1)
+                .QueryParam("display", 0)
+                .QueryParam("state", GetRealState(state))
+                .Build();
         }
 
         /**
@@ -87,12 +87,12 @@ namespace Come.CollectiveOAuth.Request
          */
         protected override string accessTokenUrl(string code)
         {
-            return UrlBuilder.fromBaseUrl(source.accessToken())
-                .queryParam("code", code)
-                .queryParam("client_key", config.clientId)
-                .queryParam("client_secret", config.clientSecret)
-                .queryParam("grant_type", "authorization_code")
-                .build();
+            return UrlBuilder.FromBaseUrl(source.AccessToken())
+                .QueryParam("code", code)
+                .QueryParam("client_key", config.ClientId)
+                .QueryParam("client_secret", config.ClientSecret)
+                .QueryParam("grant_type", "authorization_code")
+                .Build();
         }
 
         /**
@@ -101,12 +101,12 @@ namespace Come.CollectiveOAuth.Request
          * @param authToken 用户授权后的token
          * @return 返回获取userInfo的url
          */
-        protected override string userInfoUrl(AuthToken authToken)
+        protected override string UserInfoUrl(AuthToken authToken)
         {
-            return UrlBuilder.fromBaseUrl(source.userInfo())
-                .queryParam("client_key", config.clientId)
-                .queryParam("access_token", authToken.accessToken)
-                .build();
+            return UrlBuilder.FromBaseUrl(source.UserInfo())
+                .QueryParam("client_key", config.ClientId)
+                .QueryParam("access_token", authToken.AccessToken)
+                .Build();
         }
 
         /**
@@ -115,21 +115,21 @@ namespace Come.CollectiveOAuth.Request
        * @param response 请求结果
        * @return 如果请求结果正常，则返回Exception
        */
-        private void checkResponse(Dictionary<string, object> dic)
+        private void CheckResponse(Dictionary<string, object> dic)
         {
             if (dic.ContainsKey("error_code"))
             {
-                throw new Exception(getToutiaoErrorCode(dic.getInt32("error_code")).GetDesc());
+                throw new Exception(GetToutiaoErrorCode(dic.GetInt32("error_code")).GetDesc());
             }
         }
 
-        private AuthToutiaoErrorCode getToutiaoErrorCode(int errorCode)
+        private AuthToutiaoErrorCode GetToutiaoErrorCode(int errorCode)
         {
             var enumObjects = typeof(AuthToutiaoErrorCode).ToList();
             var codeEnum = enumObjects.Where(a => a.ID == errorCode).ToList();
             if (codeEnum.Count > 0)
             {
-                return GlobalAuthUtil.enumFromString<AuthToutiaoErrorCode>(codeEnum[0].Name);
+                return GlobalAuthUtil.EnumFromString<AuthToutiaoErrorCode>(codeEnum[0].Name);
             }
             else
             {

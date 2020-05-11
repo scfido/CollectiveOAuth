@@ -7,32 +7,32 @@ namespace Come.CollectiveOAuth.Config
      */
     public class CodingAuthSource : IAuthSource
     {
-        public string authorize()
+        public string Authorize()
         {
             return "https://coding.net/oauth_authorize.html";
         }
 
-        public string accessToken()
+        public string AccessToken()
         {
             return "https://coding.net/api/oauth/access_token";
         }
 
-        public string userInfo()
+        public string UserInfo()
         {
             return "https://coding.net/api/account/current_user";
         }
 
-        public string revoke()
+        public string Revoke()
         {
             throw new System.NotImplementedException();
         }
 
-        public string refresh()
+        public string Refresh()
         {
             throw new System.NotImplementedException();
         }
 
-        public string getName()
+        public string GetName()
         {
             return DefaultAuthSourceEnum.CODING.ToString();
         }

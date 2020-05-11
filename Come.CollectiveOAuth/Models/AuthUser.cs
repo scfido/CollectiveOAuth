@@ -9,57 +9,62 @@ namespace Come.CollectiveOAuth.Models
         *
         * @since 1.3.3
         */
-        public string uuid { get; set; }
+        public string Uuid { get; set; }
         /**
          * 用户名
          */
-        public string username { get; set; }
+        public string Username { get; set; }
         /**
          * 用户昵称
          */
-        public string nickname { get; set; }
+        public string Nickname { get; set; }
         /**
          * 用户头像
          */
-        public string avatar { get; set; }
+        public string Avatar { get; set; }
         /**
          * 用户网址
          */
-        public string blog { get; set; }
+        public string Blog { get; set; }
         /**
          * 所在公司
          */
-        public string company { get; set; }
+        public string Company { get; set; }
         /**
          * 位置
          */
-        public string location { get; set; }
+        public string Location { get; set; }
         /**
          * 用户邮箱
          */
-        public string email { get; set; }
+        public string Email { get; set; }
         /**
          * 用户备注（各平台中的用户个人介绍）
          */
-        public string remark { get; set; }
+        public string Remark { get; set; }
         /**
          * 性别
          */
-        public AuthUserGender gender { get; set; }
+        public AuthUserGender Gender { get; set; }
         /**
          * 用户来源
          */
-        public string source { get; set; }
+        public string Source { get; set; }
         /**
          * 用户授权的token信息
          */
-        public AuthToken token { get; set; }
+        public AuthToken Token { get; set; }
+
+        /// <summary>
+        /// 是否启用
+        /// </summary>
+        public bool Enable { get; set; } // Todo:完善各账户中的是否启用设置
 
         /// <summary>
         /// 原有的用户信息(第三方返回的)
         /// </summary>
-        public object originalUser { get; set; }
+        public object OriginalUser { get; set; }
 
-        public string originalUserStr { get; set; }
+        public string OriginalUserStr { get; set; }
     }
 }

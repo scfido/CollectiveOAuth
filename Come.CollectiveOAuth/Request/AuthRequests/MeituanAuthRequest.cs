@@ -18,96 +18,96 @@ namespace Come.CollectiveOAuth.Request
             : base(config, new MeituanAuthSource(), authStateCache)
         {
         }
-        protected override AuthToken getAccessToken(AuthCallback authCallback)
+        protected override AuthToken GetAccessToken(AuthCallback authCallback)
         {
             var reqParams = new Dictionary<string, object>
             {
-                { "app_id", config.clientId },
-                { "secret", config.clientSecret },
-                { "code", authCallback.code },
+                { "app_id", config.ClientId },
+                { "secret", config.ClientSecret },
+                { "code", authCallback.Code },
                 { "grant_type", "authorization_code" },
             };
 
-            var response = HttpUtils.RequestFormPost(source.accessToken(), reqParams.spellParams());
-            var accessTokenObject = response.parseObject();
+            var response = HttpUtils.RequestFormPost(source.AccessToken(), reqParams.SpellParams());
+            var accessTokenObject = response.ParseObject();
 
             this.checkResponse(accessTokenObject);
 
             var authToken = new AuthToken
             {
-                accessToken = accessTokenObject.getString("access_token"),
-                expireIn = accessTokenObject.getInt32("expires_in"),
-                refreshToken = accessTokenObject.getString("refresh_token"),
-                code = authCallback.code
+                AccessToken = accessTokenObject.GetString("access_token"),
+                ExpireIn = accessTokenObject.GetInt32("expires_in"),
+                RefreshToken = accessTokenObject.GetString("refresh_token"),
+                Code = authCallback.Code
             };
 
             return authToken;
         }
 
-        protected override AuthUser getUserInfo(AuthToken authToken)
+        protected override AuthUser GetUserInfo(AuthToken authToken)
         {
             var reqParams = new Dictionary<string, object>
             {
-                { "app_id", config.clientId },
-                { "secret", config.clientSecret },
-                { "access_token", authToken.accessToken },
+                { "app_id", config.ClientId },
+                { "secret", config.ClientSecret },
+                { "access_token", authToken.AccessToken },
             };
 
-            var response = HttpUtils.RequestFormPost(source.userInfo(), reqParams.spellParams());
-            var userObj = response.parseObject();
+            var response = HttpUtils.RequestFormPost(source.UserInfo(), reqParams.SpellParams());
+            var userObj = response.ParseObject();
 
             this.checkResponse(userObj);
 
             var authUser = new AuthUser
             {
-                uuid = userObj.getString("openid"),
-                username = userObj.getString("nickname"),
-                nickname = userObj.getString("nickname"),
-                avatar = userObj.getString("avatar"),
-                gender = AuthUserGender.UNKNOWN,
-                token = authToken,
-                source = source.getName(),
-                originalUser = userObj,
-                originalUserStr = response
+                Uuid = userObj.GetString("openid"),
+                Username = userObj.GetString("nickname"),
+                Nickname = userObj.GetString("nickname"),
+                Avatar = userObj.GetString("avatar"),
+                Gender = AuthUserGender.Unknown,
+                Token = authToken,
+                Source = source.GetName(),
+                OriginalUser = userObj,
+                OriginalUserStr = response
             };
             return authUser;
         }
 
-        public override AuthResponse refresh(AuthToken oldToken)
+        public override AuthResponse Refresh(AuthToken oldToken)
         {
             var reqParams = new Dictionary<string, object>
             {
-                { "app_id", config.clientId },
-                { "secret", config.clientSecret },
-                { "refresh_token", oldToken.refreshToken },
+                { "app_id", config.ClientId },
+                { "secret", config.ClientSecret },
+                { "refresh_token", oldToken.RefreshToken },
                 { "grant_type", "refresh_token" },
             };
 
-            var response = HttpUtils.RequestFormPost(source.refresh(), reqParams.spellParams());
-            var accessTokenObject = response.parseObject();
+            var response = HttpUtils.RequestFormPost(source.Refresh(), reqParams.SpellParams());
+            var accessTokenObject = response.ParseObject();
 
             this.checkResponse(accessTokenObject);
 
             var authToken = new AuthToken
             {
-                accessToken = accessTokenObject.getString("access_token"),
-                refreshToken = accessTokenObject.getString("refresh_token"),
-                expireIn = accessTokenObject.getInt32("expires_in")
+                AccessToken = accessTokenObject.GetString("access_token"),
+                RefreshToken = accessTokenObject.GetString("refresh_token"),
+                ExpireIn = accessTokenObject.GetInt32("expires_in")
             };
 
             return new AuthResponse(AuthResponseStatus.SUCCESS.GetCode(), AuthResponseStatus.SUCCESS.GetDesc(), authToken);
         }
 
 
-        public override string authorize(string state)
+        public override string Authorize(string state)
         {
-            return UrlBuilder.fromBaseUrl(source.authorize())
-                .queryParam("response_type", "code")
-                .queryParam("app_id", config.clientId)
-                .queryParam("redirect_uri", config.redirectUri)
-                .queryParam("state", getRealState(state))
-                .queryParam("scope", config.scope)
-                .build();
+            return UrlBuilder.FromBaseUrl(source.Authorize())
+                .QueryParam("response_type", "code")
+                .QueryParam("app_id", config.ClientId)
+                .QueryParam("redirect_uri", config.RedirectUri)
+                .QueryParam("state", GetRealState(state))
+                .QueryParam("scope", config.Scope)
+                .Build();
         }
 
 
@@ -121,7 +121,7 @@ namespace Come.CollectiveOAuth.Request
         {
             if (dic.ContainsKey("error_code"))
             {
-                throw new Exception($"{dic.getString("error_msg")}");
+                throw new Exception($"{dic.GetString("error_msg")}");
             }
         }
     }

@@ -19,23 +19,23 @@ namespace Come.CollectiveOAuth.Request
         {
         }
 
-        protected override AuthToken getAccessToken(AuthCallback authCallback)
+        protected override AuthToken GetAccessToken(AuthCallback authCallback)
         {
-            return this.getToken(accessTokenUrl(authCallback.code));
+            return this.getToken(accessTokenUrl(authCallback.Code));
         }
 
-        protected override AuthUser getUserInfo(AuthToken authToken)
+        protected override AuthUser GetUserInfo(AuthToken authToken)
         {
-            var accessToken = authToken.accessToken;
+            var accessToken = authToken.AccessToken;
             var reqParams = new Dictionary<string, object>
             {
                 { "Host", "api.linkedin.com" },
                 { "Connection", "Keep-Alive" },
                 { "Authorization", "Bearer " + accessToken }
             };
-            var response = HttpUtils.RequestGet(userInfoUrl(authToken), reqParams);
+            var response = HttpUtils.RequestGet(UserInfoUrl(authToken), reqParams);
              
-            var userObj = response.parseObject();
+            var userObj = response.ParseObject();
 
             this.checkResponse(userObj);
 
@@ -50,16 +50,16 @@ namespace Come.CollectiveOAuth.Request
 
             var authUser = new AuthUser
             {
-                uuid = userObj.getString("id"),
-                username = userName,
-                nickname = userName,
-                avatar = avatar,
-                email = email,
-                gender = AuthUserGender.UNKNOWN,
-                token = authToken,
-                source = source.getName(),
-                originalUser = userObj,
-                originalUserStr = response
+                Uuid = userObj.GetString("id"),
+                Username = userName,
+                Nickname = userName,
+                Avatar = avatar,
+                Email = email,
+                Gender = AuthUserGender.Unknown,
+                Token = authToken,
+                Source = source.GetName(),
+                OriginalUser = userObj,
+                OriginalUserStr = response
             };
             return authUser;
         }
@@ -76,7 +76,7 @@ namespace Come.CollectiveOAuth.Request
             // 获取firstName
             if (userInfoObject.ContainsKey("localizedFirstName"))
             {
-                firstName = userInfoObject.getString("localizedFirstName");
+                firstName = userInfoObject.GetString("localizedFirstName");
             }
             else
             {
@@ -85,7 +85,7 @@ namespace Come.CollectiveOAuth.Request
             // 获取lastName
             if (userInfoObject.ContainsKey("localizedLastName"))
             {
-                lastName = userInfoObject.getString("localizedLastName");
+                lastName = userInfoObject.GetString("localizedLastName");
             }
             else
             {
@@ -103,15 +103,15 @@ namespace Come.CollectiveOAuth.Request
         private string getAvatar(Dictionary<string, object> userInfoObject)
         {
             string avatar = null;
-            var profilePictureObject = userInfoObject.getJSONObject("profilePicture");
+            var profilePictureObject = userInfoObject.GetJSONObject("profilePicture");
             if (profilePictureObject.ContainsKey("displayImage~"))
             {
-                var displayImageElements = profilePictureObject.getJSONObject("displayImage~")
-                    .getJSONArray("elements");
+                var displayImageElements = profilePictureObject.GetJSONObject("displayImage~")
+                    .GetJSONArray("elements");
                 if (null != displayImageElements && displayImageElements.Count > 0)
                 {
                     var largestImageObj = displayImageElements[displayImageElements.Count - 1];
-                    avatar = largestImageObj.getJSONArray("identifiers")[0].getString("identifier");
+                    avatar = largestImageObj.GetJSONArray("identifiers")[0].GetString("identifier");
                 }
             }
             return avatar;
@@ -132,12 +132,12 @@ namespace Come.CollectiveOAuth.Request
             reqParams.Add("Authorization", "Bearer " + accessToken);
             var emailResponse = HttpUtils.RequestGet("https://api.linkedin.com/v2/emailAddress?q=members&projection=(elements*(handle~))", reqParams);
                 
-            var emailObj = emailResponse.parseObject();
+            var emailObj = emailResponse.ParseObject();
             this.checkResponse(emailObj);
-            var listObject = emailObj.getJSONArray("elements");
+            var listObject = emailObj.GetJSONArray("elements");
             if (listObject != null && listObject.Count > 0)
             {
-                email = listObject[listObject.Count - 1].getJSONObject("handle~").getString("emailAddress");
+                email = listObject[listObject.Count - 1].GetJSONObject("handle~").GetString("emailAddress");
             }
 
             return email;
@@ -146,21 +146,21 @@ namespace Come.CollectiveOAuth.Request
         private string getUserName(Dictionary<string, object> userInfoObject, string nameKey)
         {
             string firstName;
-            var firstNameObj = userInfoObject.getJSONObject(nameKey);
-            var localizedObj = firstNameObj.getJSONObject("localized");
-            var preferredLocaleObj = firstNameObj.getJSONObject("preferredLocale");
-            firstName = localizedObj.getString(preferredLocaleObj.getString("language") + "_" + preferredLocaleObj.getString("country"));
+            var firstNameObj = userInfoObject.GetJSONObject(nameKey);
+            var localizedObj = firstNameObj.GetJSONObject("localized");
+            var preferredLocaleObj = firstNameObj.GetJSONObject("preferredLocale");
+            firstName = localizedObj.GetString(preferredLocaleObj.GetString("language") + "_" + preferredLocaleObj.GetString("country"));
             return firstName;
         }
 
-        public override AuthResponse refresh(AuthToken oldToken)
+        public override AuthResponse Refresh(AuthToken oldToken)
         {
-            string refreshToken = oldToken.refreshToken;
+            string refreshToken = oldToken.RefreshToken;
             if (refreshToken.IsNullOrWhiteSpace())
             {
                 throw new Exception(AuthResponseStatus.REQUIRED_REFRESH_TOKEN.GetDesc());
             }
-            string refreshTokenUrl = this.refreshTokenUrl(refreshToken);
+            string refreshTokenUrl = this.RefreshTokenUrl(refreshToken);
 
             return new AuthResponse(AuthResponseStatus.SUCCESS.GetCode(), AuthResponseStatus.SUCCESS.GetDesc(), this.getToken(refreshTokenUrl));
         }
@@ -179,14 +179,14 @@ namespace Come.CollectiveOAuth.Request
 
             string response = HttpUtils.RequestPost(accessTokenUrl, null, reqParams);
             string accessTokenStr = response;
-            var accessTokenObject = accessTokenStr.parseObject();
+            var accessTokenObject = accessTokenStr.ParseObject();
 
             this.checkResponse(accessTokenObject);
 
             var authToken = new AuthToken();
-            authToken.accessToken = accessTokenObject.getString("access_token");
-            authToken.refreshToken = accessTokenObject.getString("refresh_token");
-            authToken.expireIn = accessTokenObject.getInt32("expire_in");
+            authToken.AccessToken = accessTokenObject.GetString("access_token");
+            authToken.RefreshToken = accessTokenObject.GetString("refresh_token");
+            authToken.ExpireIn = accessTokenObject.GetInt32("expire_in");
 
             return authToken;
         }
@@ -198,15 +198,15 @@ namespace Come.CollectiveOAuth.Request
          * @return 返回授权地址
          * @since 1.9.3
          */
-        public override string authorize(string state)
+        public override string Authorize(string state)
         {
-            return UrlBuilder.fromBaseUrl(source.authorize())
-                .queryParam("response_type", "code")
-                .queryParam("client_id", config.clientId)
-                .queryParam("redirect_uri", config.redirectUri)
-                .queryParam("scope", config.scope.IsNullOrWhiteSpace() ? "r_liteprofile%20r_emailaddress%20w_member_social": config.scope)
-                .queryParam("state", getRealState(state))
-                .build();
+            return UrlBuilder.FromBaseUrl(source.Authorize())
+                .QueryParam("response_type", "code")
+                .QueryParam("client_id", config.ClientId)
+                .QueryParam("redirect_uri", config.RedirectUri)
+                .QueryParam("scope", config.Scope.IsNullOrWhiteSpace() ? "r_liteprofile%20r_emailaddress%20w_member_social": config.Scope)
+                .QueryParam("state", GetRealState(state))
+                .Build();
         }
 
         /**
@@ -215,11 +215,11 @@ namespace Come.CollectiveOAuth.Request
          * @param authToken 用户授权后的token
          * @return 返回获取userInfo的url
          */
-        protected override string userInfoUrl(AuthToken authToken)
+        protected override string UserInfoUrl(AuthToken authToken)
         {
-            return UrlBuilder.fromBaseUrl(source.userInfo())
-                .queryParam("projection", "(id,firstName,lastName,profilePicture(displayImage~:playableStreams))")
-                .build();
+            return UrlBuilder.FromBaseUrl(source.UserInfo())
+                .QueryParam("projection", "(id,firstName,lastName,profilePicture(displayImage~:playableStreams))")
+                .Build();
         }
         /**
        * 校验请求结果
@@ -231,7 +231,7 @@ namespace Come.CollectiveOAuth.Request
         {
             if (dic.ContainsKey("error"))
             {
-                throw new Exception($"{dic.getString("error_description")}");
+                throw new Exception($"{dic.GetString("error_description")}");
             }
         }
     }

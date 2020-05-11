@@ -7,32 +7,32 @@ namespace Come.CollectiveOAuth.Config
      */
     public class OschinaAuthSource : IAuthSource
     {
-        public string authorize()
+        public string Authorize()
         {
             return "https://www.oschina.net/action/oauth2/authorize";
         }
 
-        public string accessToken()
+        public string AccessToken()
         {
             return "https://www.oschina.net/action/openapi/token";
         }
 
-        public string userInfo()
+        public string UserInfo()
         {
             return "https://www.oschina.net/action/openapi/user";
         }
 
-        public string revoke()
+        public string Revoke()
         {
             throw new System.NotImplementedException();
         }
 
-        public string refresh()
+        public string Refresh()
         {
             throw new System.NotImplementedException();
         }
 
-        public string getName()
+        public string GetName()
         {
             return DefaultAuthSourceEnum.OSCHINA.ToString();
         }

@@ -20,53 +20,53 @@ namespace Come.CollectiveOAuth.Request
         {
         }
 
-        protected override AuthToken getAccessToken(AuthCallback authCallback)
+        protected override AuthToken GetAccessToken(AuthCallback authCallback)
         {
-            string response = doGetAuthorizationCode(authCallback.code);
-            var accessTokenObject = response.parseObject();
+            string response = DoGetAuthorizationCode(authCallback.Code);
+            var accessTokenObject = response.ParseObject();
             this.checkResponse(accessTokenObject);
 
             var authToken = new AuthToken();
-            authToken.accessToken = accessTokenObject.getString("access_token");
-            authToken.expireIn = accessTokenObject.getInt32("expires_in");
-            authToken.refreshToken = accessTokenObject.getString("refresh_token");
+            authToken.AccessToken = accessTokenObject.GetString("access_token");
+            authToken.ExpireIn = accessTokenObject.GetInt32("expires_in");
+            authToken.RefreshToken = accessTokenObject.GetString("refresh_token");
             return authToken;
         }
 
-        protected override AuthUser getUserInfo(AuthToken authToken)
+        protected override AuthUser GetUserInfo(AuthToken authToken)
         {
-            string response = doGetUserInfo(authToken);
-            var resData = response.parseObject();
+            string response = DoGetUserInfo(authToken);
+            var resData = response.ParseObject();
             this.checkResponse(resData);
 
-            var userObj = resData.getString("data").parseObject();
+            var userObj = resData.GetString("data").ParseObject();
 
             var authUser = new AuthUser();
-            authUser.uuid = userObj.getString("id");
-            authUser.username = userObj.getString("name");
-            authUser.nickname = userObj.getString("name");
-            authUser.avatar = $"{"https://coding.net/"}{userObj.getString("avatar")}";
-            authUser.blog = $"{"https://coding.net/"}{userObj.getString("path")}";
-            authUser.company = userObj.getString("company");
-            authUser.location = userObj.getString("location");
-            authUser.email = userObj.getString("email");
-            authUser.remark = userObj.getString("slogan");
-            authUser.gender = GlobalAuthUtil.getRealGender(userObj.getString("sex"));
+            authUser.Uuid = userObj.GetString("id");
+            authUser.Username = userObj.GetString("name");
+            authUser.Nickname = userObj.GetString("name");
+            authUser.Avatar = $"{"https://coding.net/"}{userObj.GetString("avatar")}";
+            authUser.Blog = $"{"https://coding.net/"}{userObj.GetString("path")}";
+            authUser.Company = userObj.GetString("company");
+            authUser.Location = userObj.GetString("location");
+            authUser.Email = userObj.GetString("email");
+            authUser.Remark = userObj.GetString("slogan");
+            authUser.Gender = GlobalAuthUtil.GetRealGender(userObj.GetString("sex"));
 
-            authUser.token = authToken;
-            authUser.source = source.getName();
-            authUser.originalUser = resData;
-            authUser.originalUserStr = response;
+            authUser.Token = authToken;
+            authUser.Source = source.GetName();
+            authUser.OriginalUser = resData;
+            authUser.OriginalUserStr = response;
             return authUser;
         }
 
-        protected override string doGetUserInfo(AuthToken authToken)
+        protected override string DoGetUserInfo(AuthToken authToken)
         {
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-            return HttpUtils.RequestJsonGet(userInfoUrl(authToken));
+            return HttpUtils.RequestJsonGet(UserInfoUrl(authToken));
         }
 
-        protected override string doGetAuthorizationCode(String code)
+        protected override string DoGetAuthorizationCode(String code)
         {
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
             return HttpUtils.RequestJsonGet(accessTokenUrl(code));
@@ -79,15 +79,15 @@ namespace Come.CollectiveOAuth.Request
          * @return 返回授权地址
          * @since 1.9.3
          */
-        public override string authorize(string state)
+        public override string Authorize(string state)
         {
-            return UrlBuilder.fromBaseUrl(source.authorize())
-                .queryParam("response_type", "code")
-                .queryParam("client_id", config.clientId)
-                .queryParam("redirect_uri", config.redirectUri)
-                .queryParam("scope", config.scope.IsNullOrWhiteSpace() ? "user" : config.scope)
-                .queryParam("state", getRealState(state))
-                .build();
+            return UrlBuilder.FromBaseUrl(source.Authorize())
+                .QueryParam("response_type", "code")
+                .QueryParam("client_id", config.ClientId)
+                .QueryParam("redirect_uri", config.RedirectUri)
+                .QueryParam("scope", config.Scope.IsNullOrWhiteSpace() ? "user" : config.Scope)
+                .QueryParam("state", GetRealState(state))
+                .Build();
         }
         /**
         * 校验请求结果
@@ -97,9 +97,9 @@ namespace Come.CollectiveOAuth.Request
         */
         private void checkResponse(Dictionary<string, object> dic)
         {
-            if (dic.ContainsKey("code") && dic.getInt32("code") != 0)
+            if (dic.ContainsKey("code") && dic.GetInt32("code") != 0)
             {
-                throw new Exception($"{dic.getString("msg")}");
+                throw new Exception($"{dic.GetString("msg")}");
             }
         }
     }

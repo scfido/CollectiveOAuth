@@ -7,32 +7,32 @@ namespace Come.CollectiveOAuth.Config
      */
     public class TwitterAuthSource : IAuthSource
     {
-        public string authorize()
+        public string Authorize()
         {
             return "https://api.twitter.com/oauth/authenticate";
         }
 
-        public string accessToken()
+        public string AccessToken()
         {
             return "https://api.twitter.com/oauth/access_token";
         }
 
-        public string userInfo()
+        public string UserInfo()
         {
             return "https://api.twitter.com/1.1/users/show.json";
         }
 
-        public string revoke()
+        public string Revoke()
         {
             throw new System.NotImplementedException();
         }
 
-        public string refresh()
+        public string Refresh()
         {
             throw new System.NotImplementedException();
         }
 
-        public string getName()
+        public string GetName()
         {
             return DefaultAuthSourceEnum.TWITTER.ToString();
         }

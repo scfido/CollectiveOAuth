@@ -19,53 +19,53 @@ namespace Come.CollectiveOAuth.Request
         {
         }
 
-        protected override AuthToken getAccessToken(AuthCallback authCallback)
+        protected override AuthToken GetAccessToken(AuthCallback authCallback)
         {
-            string accessTokenUrl = this.accessTokenUrl(authCallback.code);
+            string accessTokenUrl = this.accessTokenUrl(authCallback.Code);
 
             var reqHeaders = new Dictionary<string, object>
             {
                 { "Content-Type", "application/x-www-form-urlencoded" },
             };
-            var reqParams = accessTokenUrl.parseUrlObject();
+            var reqParams = accessTokenUrl.ParseUrlObject();
 
-            var response = HttpUtils.RequestPost(source.accessToken(), reqParams.spellParams(), reqHeaders);
+            var response = HttpUtils.RequestPost(source.AccessToken(), reqParams.SpellParams(), reqHeaders);
 
-            var accessTokenObject = response.parseObject();
+            var accessTokenObject = response.ParseObject();
             this.checkResponse(accessTokenObject);
 
             var authToken = new AuthToken();
-            authToken.accessToken = accessTokenObject.getString("access_token");
-            authToken.expireIn = accessTokenObject.getInt32("expires");
+            authToken.AccessToken = accessTokenObject.GetString("access_token");
+            authToken.ExpireIn = accessTokenObject.GetInt32("expires");
             return authToken;
         }
 
 
-        protected override AuthUser getUserInfo(AuthToken authToken)
+        protected override AuthUser GetUserInfo(AuthToken authToken)
         {
-            string userInfoUrl = UrlBuilder.fromBaseUrl(this.source.userInfo())
-                .queryParam("access_token", authToken.accessToken)
-                .queryParam("site", "stackoverflow")
-                .queryParam("key", this.config.stackOverflowKey)
-                .build();
+            string userInfoUrl = UrlBuilder.FromBaseUrl(this.source.UserInfo())
+                .QueryParam("access_token", authToken.AccessToken)
+                .QueryParam("site", "stackoverflow")
+                .QueryParam("key", this.config.StackOverflowKey)
+                .Build();
 
             var response = HttpUtils.RequestGet(userInfoUrl);
-            var responseObj = response.parseObject();
+            var responseObj = response.ParseObject();
             this.checkResponse(responseObj);
-            var userObj = responseObj.getString("items").parseListObject()[0];
+            var userObj = responseObj.GetString("items").ParseListObject()[0];
 
             var authUser = new AuthUser();
-            authUser.uuid = userObj.getString("user_id");
-            authUser.username = userObj.getString("username");
-            authUser.nickname = userObj.getString("display_name");
-            authUser.avatar = userObj.getString("profile_image");
-            authUser.location = userObj.getString("location");
+            authUser.Uuid = userObj.GetString("user_id");
+            authUser.Username = userObj.GetString("username");
+            authUser.Nickname = userObj.GetString("display_name");
+            authUser.Avatar = userObj.GetString("profile_image");
+            authUser.Location = userObj.GetString("location");
            
-            authUser.gender = AuthUserGender.UNKNOWN;
-            authUser.token = authToken;
-            authUser.source = source.getName();
-            authUser.originalUser = responseObj;
-            authUser.originalUserStr = response;
+            authUser.Gender = AuthUserGender.Unknown;
+            authUser.Token = authToken;
+            authUser.Source = source.GetName();
+            authUser.OriginalUser = responseObj;
+            authUser.OriginalUserStr = response;
             return authUser;
         }
 
@@ -77,15 +77,15 @@ namespace Come.CollectiveOAuth.Request
          * @since 1.9.3
          */
         
-        public override string authorize(string state)
+        public override string Authorize(string state)
         {
-            return UrlBuilder.fromBaseUrl(source.authorize())
-                .queryParam("response_type", "code")
-                .queryParam("client_id", config.clientId)
-                .queryParam("redirect_uri", config.redirectUri)
-                .queryParam("scope", config.scope.IsNullOrWhiteSpace() ? "read_inbox" : config.scope)
-                .queryParam("state", getRealState(state))
-                .build();
+            return UrlBuilder.FromBaseUrl(source.Authorize())
+                .QueryParam("response_type", "code")
+                .QueryParam("client_id", config.ClientId)
+                .QueryParam("redirect_uri", config.RedirectUri)
+                .QueryParam("scope", config.Scope.IsNullOrWhiteSpace() ? "read_inbox" : config.Scope)
+                .QueryParam("state", GetRealState(state))
+                .Build();
         }
 
 
@@ -98,7 +98,7 @@ namespace Come.CollectiveOAuth.Request
         {
             if (dic.ContainsKey("error"))
             {
-                throw new Exception($"{dic.getString("error_description")}");
+                throw new Exception($"{dic.GetString("error_description")}");
             }
         }
     }

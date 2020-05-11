@@ -7,32 +7,32 @@ namespace Come.CollectiveOAuth.Config
      */
     public class XiaoMiAuthSource : IAuthSource
     {
-        public string authorize()
+        public string Authorize()
         {
             return "https://account.xiaomi.com/oauth2/authorize";
         }
 
-        public string accessToken()
+        public string AccessToken()
         {
             return "https://account.xiaomi.com/oauth2/token";
         }
 
-        public string userInfo()
+        public string UserInfo()
         {
             return "https://open.account.xiaomi.com/user/profile";
         }
 
-        public string revoke()
+        public string Revoke()
         {
             throw new System.NotImplementedException();
         }
 
-        public string refresh()
+        public string Refresh()
         {
             return "https://account.xiaomi.com/oauth2/token";
         }
 
-        public string getName()
+        public string GetName()
         {
             return DefaultAuthSourceEnum.XIAOMI.ToString();
         }

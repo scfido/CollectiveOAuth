@@ -20,7 +20,7 @@ namespace Come.CollectiveOAuth.Request
         {
         }
 
-        protected override AuthToken getAccessToken(AuthCallback authCallback)
+        protected override AuthToken GetAccessToken(AuthCallback authCallback)
         {
             var reqHeaders = new Dictionary<string, object>
             {
@@ -28,60 +28,60 @@ namespace Come.CollectiveOAuth.Request
             };
             var reqParams = new Dictionary<string, object>
             {
-                { "client_id", config.clientId },
-                { "client_secret", config.clientSecret },
-                { "code", authCallback.code },
+                { "client_id", config.ClientId },
+                { "client_secret", config.ClientSecret },
+                { "code", authCallback.Code },
                 { "grant_type", "code" },
             };
 
-            var response = HttpUtils.RequestPost(source.accessToken(), reqParams.spellParams(), reqHeaders);
+            var response = HttpUtils.RequestPost(source.AccessToken(), reqParams.SpellParams(), reqHeaders);
 
-            var accessTokenObject = response.parseObject();
+            var accessTokenObject = response.ParseObject();
 
             this.checkResponse(accessTokenObject);
 
             var authToken = new AuthToken();
-            authToken.accessToken = accessTokenObject.getString("access_token");
-            authToken.refreshToken = accessTokenObject.getString("refresh_token");
+            authToken.AccessToken = accessTokenObject.GetString("access_token");
+            authToken.RefreshToken = accessTokenObject.GetString("refresh_token");
 
             return authToken;
         }
 
-        protected override AuthUser getUserInfo(AuthToken authToken)
+        protected override AuthUser GetUserInfo(AuthToken authToken)
         {
-            var accessToken = authToken.accessToken;
+            var accessToken = authToken.AccessToken;
             var reqHeaders = new Dictionary<string, object>
             {
                 { "Authorization", "OAuth2 " + accessToken },
             };
 
-            var response = HttpUtils.RequestGet(source.userInfo(), reqHeaders);
-            var userObj = response.parseObject();
+            var response = HttpUtils.RequestGet(source.UserInfo(), reqHeaders);
+            var userObj = response.ParseObject();
 
             this.checkResponse(userObj);
-            authToken.uid = userObj.getString("_id");
+            authToken.Uid = userObj.GetString("_id");
 
             var authUser = new AuthUser();
-            authUser.uuid = userObj.getString("_id");
-            authUser.username = userObj.getString("name");
-            authUser.nickname = userObj.getString("name");
-            authUser.avatar = userObj.getString("avatarUrl");
-            authUser.blog = userObj.getString("website");
-            authUser.location = userObj.getString("location");
-            authUser.email = userObj.getString("email");
-            authUser.gender = AuthUserGender.UNKNOWN;
-            authUser.token = authToken;
-            authUser.source = source.getName();
-            authUser.originalUser = userObj;
-            authUser.originalUserStr = response;
+            authUser.Uuid = userObj.GetString("_id");
+            authUser.Username = userObj.GetString("name");
+            authUser.Nickname = userObj.GetString("name");
+            authUser.Avatar = userObj.GetString("avatarUrl");
+            authUser.Blog = userObj.GetString("website");
+            authUser.Location = userObj.GetString("location");
+            authUser.Email = userObj.GetString("email");
+            authUser.Gender = AuthUserGender.Unknown;
+            authUser.Token = authToken;
+            authUser.Source = source.GetName();
+            authUser.OriginalUser = userObj;
+            authUser.OriginalUserStr = response;
             return authUser;
         }
 
         
-        public override AuthResponse refresh(AuthToken oldToken)
+        public override AuthResponse Refresh(AuthToken oldToken)
         {
-            string uid = oldToken.uid;
-            string refreshToken = oldToken.refreshToken;
+            string uid = oldToken.Uid;
+            string refreshToken = oldToken.RefreshToken;
             var reqHeaders = new Dictionary<string, object>
             {
                 { "Content-Type", "application/x-www-form-urlencoded" },
@@ -92,15 +92,15 @@ namespace Come.CollectiveOAuth.Request
                 { "refresh_token", refreshToken },
             };
 
-            var response = HttpUtils.RequestPost(source.refresh(), reqParams.spellParams(), reqHeaders);
+            var response = HttpUtils.RequestPost(source.Refresh(), reqParams.SpellParams(), reqHeaders);
 
-            var refreshTokenObject = response.parseObject();
+            var refreshTokenObject = response.ParseObject();
 
             this.checkResponse(refreshTokenObject);
 
             var authToken = new AuthToken();
-            authToken.accessToken = refreshTokenObject.getString("access_token");
-            authToken.refreshToken = refreshTokenObject.getString("refresh_token");
+            authToken.AccessToken = refreshTokenObject.GetString("access_token");
+            authToken.RefreshToken = refreshTokenObject.GetString("refresh_token");
 
             return new AuthResponse(AuthResponseStatus.SUCCESS.GetCode(), AuthResponseStatus.SUCCESS.GetDesc(), authToken);
         }
@@ -116,7 +116,7 @@ namespace Come.CollectiveOAuth.Request
         {
             if (dic.ContainsKey("message") && dic.ContainsKey("name"))
             {
-                throw new Exception($"{dic.getString("getString")}, {dic.getString("name")}");
+                throw new Exception($"{dic.GetString("getString")}, {dic.GetString("name")}");
             }
         }
     }

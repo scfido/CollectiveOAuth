@@ -7,32 +7,32 @@ namespace Come.CollectiveOAuth.Config
      */
     public class TaobaoAuthSource : IAuthSource
     {
-        public string authorize()
+        public string Authorize()
         {
             return "https://oauth.taobao.com/authorize";
         }
 
-        public string accessToken()
+        public string AccessToken()
         {
             return "https://oauth.taobao.com/token";
         }
 
-        public string userInfo()
+        public string UserInfo()
         {
             throw new System.NotImplementedException();
         }
 
-        public string revoke()
+        public string Revoke()
         {
             throw new System.NotImplementedException();
         }
 
-        public string refresh()
+        public string Refresh()
         {
             throw new System.NotImplementedException();
         }
 
-        public string getName()
+        public string GetName()
         {
             return DefaultAuthSourceEnum.TAOBAO.ToString();
         }

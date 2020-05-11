@@ -7,32 +7,32 @@ namespace Come.CollectiveOAuth.Config
      */
     public class StackOverflowAuthSource : IAuthSource
     {
-        public string authorize()
+        public string Authorize()
         {
             return "https://stackoverflow.com/oauth";
         }
 
-        public string accessToken()
+        public string AccessToken()
         {
             return "https://stackoverflow.com/oauth/access_token/json";
         }
 
-        public string userInfo()
+        public string UserInfo()
         {
             return "https://api.stackexchange.com/2.2/me";
         }
 
-        public string revoke()
+        public string Revoke()
         {
             throw new System.NotImplementedException();
         }
 
-        public string refresh()
+        public string Refresh()
         {
             throw new System.NotImplementedException();
         }
 
-        public string getName()
+        public string GetName()
         {
             return DefaultAuthSourceEnum.STACK_OVERFLOW.ToString();
         }

@@ -7,32 +7,32 @@ namespace Come.CollectiveOAuth.Config
      */
     public class ElemeAuthSource : IAuthSource
     {
-        public string authorize()
+        public string Authorize()
         {
             return "https://open-api.shop.ele.me/authorize";
         }
 
-        public string accessToken()
+        public string AccessToken()
         {
             return "https://open-api.shop.ele.me/token";
         }
 
-        public string userInfo()
+        public string UserInfo()
         {
             return "https://open-api.shop.ele.me/api/v1/";
         }
 
-        public string revoke()
+        public string Revoke()
         {
             throw new System.NotImplementedException();
         }
 
-        public string refresh()
+        public string Refresh()
         {
             return "https://open-api.shop.ele.me/token";
         }
 
-        public string getName()
+        public string GetName()
         {
             return DefaultAuthSourceEnum.ELEME.ToString();
         }

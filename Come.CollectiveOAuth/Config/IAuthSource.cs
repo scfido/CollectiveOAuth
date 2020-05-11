@@ -27,28 +27,28 @@ namespace Come.CollectiveOAuth.Config
          *
          * @return url
          */
-        string authorize();
+        string Authorize();
 
         /**
          * 获取accessToken的api
          *
          * @return url
          */
-        string accessToken();
+        string AccessToken();
 
         /**
          * 获取用户信息的api
          *
          * @return url
          */
-        string userInfo();
+        string UserInfo();
 
         /**
          * 取消授权的api
          *
          * @return url
          */
-        string revoke();
+        string Revoke();
 
 
         /**
@@ -56,13 +56,13 @@ namespace Come.CollectiveOAuth.Config
          *
          * @return url
          */
-        string refresh();
+        string Refresh();
 
         /**
          * 获取Source的字符串名字
          *
          * @return name
          */
-        string getName();
+        string GetName();
     }
 }

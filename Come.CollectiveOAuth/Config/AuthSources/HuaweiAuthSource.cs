@@ -7,32 +7,32 @@ namespace Come.CollectiveOAuth.Config
      */
     public class HuaweiAuthSource : IAuthSource
     {
-        public string authorize()
+        public string Authorize()
         {
             return "https://oauth-login.cloud.huawei.com/oauth2/v2/authorize";
         }
 
-        public string accessToken()
+        public string AccessToken()
         {
             return "https://oauth-login.cloud.huawei.com/oauth2/v2/token";
         }
 
-        public string userInfo()
+        public string UserInfo()
         {
             return "https://api.vmall.com/rest.php";
         }
 
-        public string revoke()
+        public string Revoke()
         {
             throw new System.NotImplementedException();
         }
 
-        public string refresh()
+        public string Refresh()
         {
             return "https://oauth.kujiale.com/oauth2/auth/token/refresh";
         }
 
-        public string getName()
+        public string GetName()
         {
             return DefaultAuthSourceEnum.KUJIALE.ToString();
         }

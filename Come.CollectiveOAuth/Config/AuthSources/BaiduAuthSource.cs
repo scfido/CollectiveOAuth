@@ -7,32 +7,32 @@ namespace Come.CollectiveOAuth.Config
      */
     public class BaiduAuthSource : IAuthSource
     {
-        public string authorize()
+        public string Authorize()
         {
             return "https://openapi.baidu.com/oauth/2.0/authorize";
         }
 
-        public string accessToken()
+        public string AccessToken()
         {
             return "https://openapi.baidu.com/oauth/2.0/token";
         }
 
-        public string userInfo()
+        public string UserInfo()
         {
             return "https://openapi.baidu.com/rest/2.0/passport/users/getInfo";
         }
 
-        public string revoke()
+        public string Revoke()
         {
             return "https://openapi.baidu.com/rest/2.0/passport/auth/revokeAuthorization";
         }
 
-        public string refresh()
+        public string Refresh()
         {
             return "https://openapi.baidu.com/oauth/2.0/token";
         }
 
-        public string getName()
+        public string GetName()
         {
             return DefaultAuthSourceEnum.BAIDU.ToString();
         }

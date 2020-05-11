@@ -22,37 +22,37 @@ namespace Come.CollectiveOAuth.Request
         {
         }
 
-        protected override AuthToken getAccessToken(AuthCallback authCallback)
+        protected override AuthToken GetAccessToken(AuthCallback authCallback)
         {
             var reqParams = new Dictionary<string, object>
             {
-                { "client_id", config.clientId },
-                { "redirect_uri", config.clientSecret },
-                { "code", authCallback.code },
+                { "client_id", config.ClientId },
+                { "redirect_uri", config.ClientSecret },
+                { "code", authCallback.Code },
                 { "grant_type", "authorization_code" },
             };
 
             var reqHeaders = this.getSpecialHeader(this.getRequestId());
 
-            var response = HttpUtils.RequestFormPost(source.accessToken(), reqParams.spellParams(), reqHeaders);
-            var accessTokenObject = response.parseObject();
+            var response = HttpUtils.RequestFormPost(source.AccessToken(), reqParams.SpellParams(), reqHeaders);
+            var accessTokenObject = response.ParseObject();
 
             this.checkResponse(accessTokenObject);
 
             var authToken = new AuthToken
             {
-                accessToken = accessTokenObject.getString("access_token"),
-                expireIn = accessTokenObject.getInt32("expires_in"),
-                refreshToken = accessTokenObject.getString("refresh_token"),
-                tokenType = accessTokenObject.getString("token_type"),
-                code = authCallback.code
+                AccessToken = accessTokenObject.GetString("access_token"),
+                ExpireIn = accessTokenObject.GetInt32("expires_in"),
+                RefreshToken = accessTokenObject.GetString("refresh_token"),
+                TokenType = accessTokenObject.GetString("token_type"),
+                Code = authCallback.Code
             };
 
             return authToken;
         }
 
 
-        protected override AuthUser getUserInfo(AuthToken authToken)
+        protected override AuthUser GetUserInfo(AuthToken authToken)
         {
             // 获取商户账号信息的API接口名称
             String action = "eleme.user.getUser";
@@ -60,9 +60,9 @@ namespace Come.CollectiveOAuth.Request
             long timestamp = DateTime.Now.Ticks;
             // 公共参数
             var metasHashMap = new Dictionary<string, object>();
-            metasHashMap.Add("app_key", config.clientId);
+            metasHashMap.Add("app_key", config.ClientId);
             metasHashMap.Add("timestamp", timestamp);
-            string signature = this.generateElemeSignature(timestamp, action, authToken.accessToken);
+            string signature = this.generateElemeSignature(timestamp, action, authToken.AccessToken);
             string requestId = this.getRequestId();
 
             var paramsMap = new Dictionary<string, object>
@@ -70,7 +70,7 @@ namespace Come.CollectiveOAuth.Request
                 { "nop", "1.0.0" },
                 { "id", requestId },
                 { "action", action },
-                { "token", authToken.accessToken },
+                { "token", authToken.AccessToken },
                 { "metas", JsonConvert.SerializeObject(metasHashMap) },
                 { "params", "{}" },
                 { "signature", signature }
@@ -85,72 +85,72 @@ namespace Come.CollectiveOAuth.Request
                 { "x-eleme-requestid", requestId},
                 { "Authorization", this.spliceBasicAuthStr()}
             };
-            var response = HttpUtils.RequestPost(source.userInfo(), JsonConvert.SerializeObject(paramsMap), reqHeaders);
+            var response = HttpUtils.RequestPost(source.UserInfo(), JsonConvert.SerializeObject(paramsMap), reqHeaders);
 
-            var resObj = response.parseObject();
+            var resObj = response.ParseObject();
 
             // 校验请求
             if (resObj.ContainsKey("name"))
             {
-                throw new Exception(resObj.getString("message"));
+                throw new Exception(resObj.GetString("message"));
             }
-            if (resObj.ContainsKey("error") && !resObj.getString("error").IsNullOrWhiteSpace())
+            if (resObj.ContainsKey("error") && !resObj.GetString("error").IsNullOrWhiteSpace())
             {
-                throw new Exception(resObj.getJSONObject("error").getString("message"));
+                throw new Exception(resObj.GetJSONObject("error").GetString("message"));
             }
 
-            var userObj = resObj.getJSONObject("result");
+            var userObj = resObj.GetJSONObject("result");
 
             var authUser = new AuthUser
             {
-                uuid = userObj.getString("userId"),
-                username = userObj.getString("userName"),
-                nickname = userObj.getString("userName"),
-                gender = AuthUserGender.UNKNOWN,
-                token = authToken,
-                source = source.getName(),
-                originalUser = resObj,
-                originalUserStr = response
+                Uuid = userObj.GetString("userId"),
+                Username = userObj.GetString("userName"),
+                Nickname = userObj.GetString("userName"),
+                Gender = AuthUserGender.Unknown,
+                Token = authToken,
+                Source = source.GetName(),
+                OriginalUser = resObj,
+                OriginalUserStr = response
             };
             return authUser;
         }
 
-        public override AuthResponse refresh(AuthToken oldToken)
+        public override AuthResponse Refresh(AuthToken oldToken)
         {
             var reqParams = new Dictionary<string, object>
             {
-                { "refresh_token", oldToken.refreshToken },
+                { "refresh_token", oldToken.RefreshToken },
                 { "grant_type", "refresh_token" },
             };
 
             var reqHeaders = this.getSpecialHeader(this.getRequestId());
 
-            var response = HttpUtils.RequestFormPost(source.accessToken(), reqParams.spellParams(), reqHeaders);
-            var accessTokenObject = response.parseObject();
+            var response = HttpUtils.RequestFormPost(source.AccessToken(), reqParams.SpellParams(), reqHeaders);
+            var accessTokenObject = response.ParseObject();
 
             this.checkResponse(accessTokenObject);
 
             var authToken = new AuthToken
             {
-                accessToken = accessTokenObject.getString("access_token"),
-                refreshToken = accessTokenObject.getString("refresh_token"),
-                expireIn = accessTokenObject.getInt32("expires_in"),
-                tokenType = accessTokenObject.getString("token_type")
+                AccessToken = accessTokenObject.GetString("access_token"),
+                RefreshToken = accessTokenObject.GetString("refresh_token"),
+                ExpireIn = accessTokenObject.GetInt32("expires_in"),
+                TokenType = accessTokenObject.GetString("token_type")
             };
 
             return new AuthResponse(AuthResponseStatus.SUCCESS.GetCode(), AuthResponseStatus.SUCCESS.GetDesc(), authToken);
         }
 
-        public override string authorize(string state)
+        public override string Authorize(string state)
         {
-            return UrlBuilder.fromBaseUrl(base.authorize(state))
-                .queryParam("scope", config.scope.IsNullOrWhiteSpace() ? "all" : config.scope)
-                .build();
+            return UrlBuilder.FromBaseUrl(base.Authorize(state))
+                .QueryParam("scope", config.Scope.IsNullOrWhiteSpace() ? "all" : config.Scope)
+                .Build();
         }
 
         private string spliceBasicAuthStr()
         {
-            string encodeToString = encodeBase64($"{config.clientId}:{config.clientSecret}");
+            string encodeToString = encodeBase64($"{config.ClientId}:{config.ClientSecret}");
             return $"Basic {encodeToString}";
         }
 
@@ -185,7 +185,7 @@ namespace Come.CollectiveOAuth.Request
         {
             if (dic.ContainsKey("error"))
             {
-                throw new Exception($"{dic.getString("error_description")}");
+                throw new Exception($"{dic.GetString("error_description")}");
             }
         }
 
@@ -237,11 +237,11 @@ namespace Come.CollectiveOAuth.Request
         public string generateElemeSignature(long timestamp, string action, string token)
         {
             Dictionary<string, object> dicList = new Dictionary<string, object>();
-            dicList.Add("app_key", config.clientId);
+            dicList.Add("app_key", config.ClientId);
             dicList.Add("timestamp", timestamp);
 
-            var signStr = dicList.Sort().spellParams();
-            string splice = $"{action}{token}{signStr}{config.clientSecret}";
+            var signStr = dicList.Sort().SpellParams();
+            string splice = $"{action}{token}{signStr}{config.ClientSecret}";
             string calculatedSignature = hashMd5String(splice);
             return calculatedSignature;
         }

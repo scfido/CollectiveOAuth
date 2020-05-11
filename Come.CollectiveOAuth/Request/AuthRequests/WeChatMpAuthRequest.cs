@@ -24,47 +24,47 @@ namespace Come.CollectiveOAuth.Request
           * @param authCallback 回调返回的参数
           * @return 所有信息
           */
-        protected override AuthToken getAccessToken(AuthCallback authCallback)
+        protected override AuthToken GetAccessToken(AuthCallback authCallback)
         {
-            return this.getToken(accessTokenUrl(authCallback.code));
+            return this.getToken(accessTokenUrl(authCallback.Code));
         }
 
-        protected override AuthUser getUserInfo(AuthToken authToken)
+        protected override AuthUser GetUserInfo(AuthToken authToken)
         {
-            string openId = authToken.openId;
+            string openId = authToken.OpenId;
 
-            string response = doGetUserInfo(authToken);
-            var jsonObj = response.parseObject();
+            string response = DoGetUserInfo(authToken);
+            var jsonObj = response.ParseObject();
 
             this.checkResponse(jsonObj);
 
             //string location = String.format("%s-%s-%s", object.getString("country"), object.getString("province"), object.getString("city"));
-            string location = $"{jsonObj.getString("country")}-{jsonObj.getString("province")}-{jsonObj.getString("city")}";
+            string location = $"{jsonObj.GetString("country")}-{jsonObj.GetString("province")}-{jsonObj.GetString("city")}";
             if (jsonObj.ContainsKey("unionid"))
             {
-                authToken.unionId = jsonObj.getString("unionid");
+                authToken.UnionId = jsonObj.GetString("unionid");
             }
 
             var authUser = new AuthUser();
 
-            authUser.username = jsonObj.getString("nickname");
-            authUser.nickname = jsonObj.getString("nickname");
-            authUser.avatar = jsonObj.getString("headimgurl");
-            authUser.location = location;
-            authUser.uuid = openId;
-            authUser.gender = GlobalAuthUtil.getWechatRealGender(jsonObj.getString("sex"));
-            authUser.token = authToken;
-            authUser.source = source.getName();
+            authUser.Username = jsonObj.GetString("nickname");
+            authUser.Nickname = jsonObj.GetString("nickname");
+            authUser.Avatar = jsonObj.GetString("headimgurl");
+            authUser.Location = location;
+            authUser.Uuid = openId;
+            authUser.Gender = GlobalAuthUtil.GetWechatRealGender(jsonObj.GetString("sex"));
+            authUser.Token = authToken;
+            authUser.Source = source.GetName();
 
-            authUser.originalUser = jsonObj;
-            authUser.originalUserStr = response;
+            authUser.OriginalUser = jsonObj;
+            authUser.OriginalUserStr = response;
 
             return authUser;
         }
 
-        public override AuthResponse refresh(AuthToken oldToken)
+        public override AuthResponse Refresh(AuthToken oldToken)
         {
-            return new AuthResponse(Convert.ToInt32(AuthResponseStatus.SUCCESS), null, this.getToken(refreshTokenUrl(oldToken.refreshToken)));
+            return new AuthResponse(Convert.ToInt32(AuthResponseStatus.SUCCESS), null, this.getToken(RefreshTokenUrl(oldToken.RefreshToken)));
         }
 
         /**
@@ -76,7 +76,7 @@ namespace Come.CollectiveOAuth.Request
         {
             if (dic.ContainsKey("errcode"))
             {
-                throw new Exception($"errcode: {dic.getString("errcode")}, errmsg: {dic.getString("errmsg")}");
+                throw new Exception($"errcode: {dic.GetString("errcode")}, errmsg: {dic.GetString("errmsg")}");
             }
         }
 
@@ -89,17 +89,17 @@ namespace Come.CollectiveOAuth.Request
         private AuthToken getToken(string accessTokenUrl)
         {
             string response = HttpUtils.RequestGet(accessTokenUrl);
-            var accessTokenObject = response.parseObject();
+            var accessTokenObject = response.ParseObject();
 
             this.checkResponse(accessTokenObject);
 
             var authToken = new AuthToken();
 
-            authToken.accessToken = accessTokenObject.getString("access_token");
-            authToken.refreshToken = accessTokenObject.getString("refresh_token");
-            authToken.expireIn = accessTokenObject.getInt32("expires_in");
-            authToken.openId = accessTokenObject.getString("openid");
-            authToken.scope = accessTokenObject.getString("scope");
+            authToken.AccessToken = accessTokenObject.GetString("access_token");
+            authToken.RefreshToken = accessTokenObject.GetString("refresh_token");
+            authToken.ExpireIn = accessTokenObject.GetInt32("expires_in");
+            authToken.OpenId = accessTokenObject.GetString("openid");
+            authToken.Scope = accessTokenObject.GetString("scope");
 
             return authToken;
         }
@@ -111,15 +111,15 @@ namespace Come.CollectiveOAuth.Request
          * @return 返回授权地址
          * @since 1.9.3
          */
-        public override string authorize(string state)
+        public override string Authorize(string state)
         {
-            return UrlBuilder.fromBaseUrl(source.authorize())
-                .queryParam("appid", config.clientId)
-                .queryParam("redirect_uri", GlobalAuthUtil.urlEncode(config.redirectUri))
-                .queryParam("response_type", "code")
-                .queryParam("scope", config.scope.IsNullOrWhiteSpace() ? "snsapi_userinfo" : config.scope)
-                .queryParam("state", getRealState(state) + "#wechat_redirect")
-                .build();
+            return UrlBuilder.FromBaseUrl(source.Authorize())
+                .QueryParam("appid", config.ClientId)
+                .QueryParam("redirect_uri", GlobalAuthUtil.UrlEncode(config.RedirectUri))
+                .QueryParam("response_type", "code")
+                .QueryParam("scope", config.Scope.IsNullOrWhiteSpace() ? "snsapi_userinfo" : config.Scope)
+                .QueryParam("state", GetRealState(state) + "#wechat_redirect")
+                .Build();
         }
 
         /**
@@ -130,12 +130,12 @@ namespace Come.CollectiveOAuth.Request
          */
         protected override string accessTokenUrl(string code)
         {
-            return UrlBuilder.fromBaseUrl(source.accessToken())
-                .queryParam("appid", config.clientId)
-                .queryParam("secret", config.clientSecret)
-                .queryParam("code", code)
-                .queryParam("grant_type", "authorization_code")
-                .build();
+            return UrlBuilder.FromBaseUrl(source.AccessToken())
+                .QueryParam("appid", config.ClientId)
+                .QueryParam("secret", config.ClientSecret)
+                .QueryParam("code", code)
+                .QueryParam("grant_type", "authorization_code")
+                .Build();
         }
 
         /**
@@ -144,13 +144,13 @@ namespace Come.CollectiveOAuth.Request
          * @param authToken 用户授权后的token
          * @return 返回获取userInfo的url
          */
-        protected override string userInfoUrl(AuthToken authToken)
+        protected override string UserInfoUrl(AuthToken authToken)
         {
-            return UrlBuilder.fromBaseUrl(source.userInfo())
-                .queryParam("access_token", authToken.accessToken)
-                .queryParam("openid", authToken.openId)
-                .queryParam("lang", "zh_CN")
-                .build();
+            return UrlBuilder.FromBaseUrl(source.UserInfo())
+                .QueryParam("access_token", authToken.AccessToken)
+                .QueryParam("openid", authToken.OpenId)
+                .QueryParam("lang", "zh_CN")
+                .Build();
         }
 
         /**
@@ -159,13 +159,13 @@ namespace Come.CollectiveOAuth.Request
          * @param refreshToken getAccessToken方法返回的refreshToken
          * @return 返回获取userInfo的url
          */
-        protected override string refreshTokenUrl(String refreshToken)
+        protected override string RefreshTokenUrl(String refreshToken)
         {
-            return UrlBuilder.fromBaseUrl(source.refresh())
-                .queryParam("appid", config.clientId)
-                .queryParam("grant_type", "refresh_token")
-                .queryParam("refresh_token", refreshToken)
-                .build();
+            return UrlBuilder.FromBaseUrl(source.Refresh())
+                .QueryParam("appid", config.ClientId)
+                .QueryParam("grant_type", "refresh_token")
+                .QueryParam("refresh_token", refreshToken)
+                .Build();
         }
     }
 }

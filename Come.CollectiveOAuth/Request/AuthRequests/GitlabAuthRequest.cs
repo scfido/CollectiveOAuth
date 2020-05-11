@@ -19,48 +19,48 @@ namespace Come.CollectiveOAuth.Request
         {
         }
 
-        protected override AuthToken getAccessToken(AuthCallback authCallback)
+        protected override AuthToken GetAccessToken(AuthCallback authCallback)
         {
-            var response = doPostAuthorizationCode(authCallback.code);
-            var accessTokenObject = response.parseObject();
+            var response = DoPostAuthorizationCode(authCallback.Code);
+            var accessTokenObject = response.ParseObject();
 
             this.checkResponse(accessTokenObject);
 
             var authToken = new AuthToken();
-            authToken.accessToken = accessTokenObject.getString("access_token");
-            authToken.refreshToken = accessTokenObject.getString("refresh_token");
-            authToken.idToken = accessTokenObject.getString("id_token");
-            authToken.tokenType = accessTokenObject.getString("token_type");
-            authToken.scope = accessTokenObject.getString("scope");
-            authToken.code = authCallback.code;
+            authToken.AccessToken = accessTokenObject.GetString("access_token");
+            authToken.RefreshToken = accessTokenObject.GetString("refresh_token");
+            authToken.IdToken = accessTokenObject.GetString("id_token");
+            authToken.TokenType = accessTokenObject.GetString("token_type");
+            authToken.Scope = accessTokenObject.GetString("scope");
+            authToken.Code = authCallback.Code;
 
             return authToken;
         }
 
 
-        protected override AuthUser getUserInfo(AuthToken authToken)
+        protected override AuthUser GetUserInfo(AuthToken authToken)
         {
-            var response = doGetUserInfo(authToken);
-            var userObj = response.parseObject();
+            var response = DoGetUserInfo(authToken);
+            var userObj = response.ParseObject();
 
             this.checkResponse(userObj);
 
             var authUser = new AuthUser();
-            authUser.uuid = userObj.getString("id");
-            authUser.username = userObj.getString("username");
-            authUser.nickname = userObj.getString("name");
-            authUser.avatar = userObj.getString("avatar_url");
-            authUser.blog = userObj.getString("web_url");
-            authUser.company = userObj.getString("organization");
-            authUser.location = userObj.getString("location");
-            authUser.email = userObj.getString("email");
-            authUser.remark = userObj.getString("bio");
-            authUser.gender = AuthUserGender.UNKNOWN;
+            authUser.Uuid = userObj.GetString("id");
+            authUser.Username = userObj.GetString("username");
+            authUser.Nickname = userObj.GetString("name");
+            authUser.Avatar = userObj.GetString("avatar_url");
+            authUser.Blog = userObj.GetString("web_url");
+            authUser.Company = userObj.GetString("organization");
+            authUser.Location = userObj.GetString("location");
+            authUser.Email = userObj.GetString("email");
+            authUser.Remark = userObj.GetString("bio");
+            authUser.Gender = AuthUserGender.Unknown;
 
-            authUser.token = authToken;
-            authUser.source = source.getName();
-            authUser.originalUser = userObj;
-            authUser.originalUserStr = response;
+            authUser.Token = authToken;
+            authUser.Source = source.GetName();
+            authUser.OriginalUser = userObj;
+            authUser.OriginalUserStr = response;
             return authUser;
         }
 
@@ -72,15 +72,15 @@ namespace Come.CollectiveOAuth.Request
          * @return 返回授权地址
          * @since 1.11.0
          */
-        public override string authorize(string state)
+        public override string Authorize(string state)
         {
-            return UrlBuilder.fromBaseUrl(source.authorize())
-                .queryParam("response_type", "code")
-                .queryParam("client_id", config.clientId)
-                .queryParam("redirect_uri", config.redirectUri)
-                .queryParam("state", getRealState(state))
-                .queryParam("scope", config.scope.IsNullOrWhiteSpace() ? "read_user+openid+profile+email" : config.scope)
-                .build();
+            return UrlBuilder.FromBaseUrl(source.Authorize())
+                .QueryParam("response_type", "code")
+                .QueryParam("client_id", config.ClientId)
+                .QueryParam("redirect_uri", config.RedirectUri)
+                .QueryParam("state", GetRealState(state))
+                .QueryParam("scope", config.Scope.IsNullOrWhiteSpace() ? "read_user+openid+profile+email" : config.Scope)
+                .Build();
         }
 
         /**
@@ -93,12 +93,12 @@ namespace Come.CollectiveOAuth.Request
         {
             if (dic.ContainsKey("error"))
             {
-                throw new Exception($"{dic.getString("error_description")}");
+                throw new Exception($"{dic.GetString("error_description")}");
             }
             // user 验证异常
             if (dic.ContainsKey("message"))
             {
-                throw new Exception($"{dic.getString("message")}");
+                throw new Exception($"{dic.GetString("message")}");
             }
         }
 

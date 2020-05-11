@@ -7,32 +7,32 @@ namespace Come.CollectiveOAuth.Config
      */
     public class LinkedInAuthSource : IAuthSource
     {
-        public string authorize()
+        public string Authorize()
         {
             return "https://www.linkedin.com/oauth/v2/authorization";
         }
 
-        public string accessToken()
+        public string AccessToken()
         {
             return "https://www.linkedin.com/oauth/v2/accessToken";
         }
 
-        public string userInfo()
+        public string UserInfo()
         {
             return "https://api.linkedin.com/v2/me";
         }
 
-        public string revoke()
+        public string Revoke()
         {
             throw new System.NotImplementedException();
         }
 
-        public string refresh()
+        public string Refresh()
         {
             return "https://www.linkedin.com/oauth/v2/accessToken";
         }
 
-        public string getName()
+        public string GetName()
         {
             return DefaultAuthSourceEnum.LINKEDIN.ToString();
         }
